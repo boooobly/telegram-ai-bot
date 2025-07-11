@@ -8,11 +8,13 @@ from aiogram.enums.chat_member_status import ChatMemberStatus
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-API_TOKEN = os.getenv("BOT_TOKEN")  # Токен из переменной окружения
-CHANNEL_USERNAME = "@simplify_ai"   # Публичный канал
+# Получаем токен из переменной окружения
+API_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_USERNAME = "@simplify_ai"
 
+# Текст при успешной проверке
 WELCOME_TEXT = """
 ✅ Спасибо за подписку!
 
@@ -37,17 +39,23 @@ WELCOME_TEXT = """
 Следи за новыми публикациями на канале!
 """
 
+# Инициализация бота
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
+# Inline-кнопка "Перейти на канал"
 channel_button = InlineKeyboardMarkup(
     inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")
-        ]
+        [InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]
     ]
+)
+
+# Reply-кнопка "/start" с текстом "Обновить" или "Проверить подписку"
+start_kb = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="/start")]],
+    resize_keyboard=True
 )
 
 @router.message(F.text == "/start")
@@ -55,18 +63,24 @@ async def cmd_start(message: types.Message):
     try:
         member = await bot.get_chat_member(CHANNEL_USERNAME, message.from_user.id)
         if member.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
-            await message.answer(WELCOME_TEXT)
+            await message.answer(WELCOME_TEXT, reply_markup=start_kb)
         else:
             await message.answer(
-                "❗Чтобы получить доступ, подпишись на канал ниже:",
+                "❗Чтобы получить доступ, подпишись на канал:",
                 reply_markup=channel_button
+            )
+            await message.answer(
+                "🔁 После подписки нажми «Проверить подписку» ниже ⬇️",
+                reply_markup=start_kb
             )
     except Exception as e:
         logging.error(f"Ошибка при проверке подписки: {e}")
         await message.answer(
-            "⚠️ Произошла ошибка при проверке подписки. Убедись, что бот добавлен в канал и у него есть права."
+            "⚠️ Произошла ошибка при проверке подписки. Убедись, что бот добавлен в канал и у него есть права.",
+            reply_markup=start_kb
         )
 
+# Запуск бота
 async def main():
     logging.basicConfig(level=logging.INFO)
     await dp.start_polling(bot)
