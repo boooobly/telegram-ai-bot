@@ -1,15 +1,17 @@
 import asyncio
 import logging
+import os
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.enums.chat_member_status import ChatMemberStatus
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-import os
-API_TOKEN = os.getenv("BOT_TOKEN") 
-CHANNEL_USERNAME = "@simplify_ai"       
+API_TOKEN = os.getenv("BOT_TOKEN")  # Токен из переменной окружения
+CHANNEL_USERNAME = "@simplify_ai"   # Публичный канал
 
 WELCOME_TEXT = """
 ✅ Спасибо за подписку!
@@ -40,6 +42,14 @@ dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
+channel_button = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")
+        ]
+    ]
+)
+
 @router.message(F.text == "/start")
 async def cmd_start(message: types.Message):
     try:
@@ -48,8 +58,8 @@ async def cmd_start(message: types.Message):
             await message.answer(WELCOME_TEXT)
         else:
             await message.answer(
-                "❗Чтобы получить доступ, подпишись на канал "
-                f"<a href='https://t.me/simplify_ai'>{CHANNEL_USERNAME}</a>"
+                "❗Чтобы получить доступ, подпишись на канал ниже:",
+                reply_markup=channel_button
             )
     except Exception as e:
         logging.error(f"Ошибка при проверке подписки: {e}")
