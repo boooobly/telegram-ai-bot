@@ -54,7 +54,7 @@ channel_button = InlineKeyboardMarkup(
 
 # Reply-кнопка "/start" с текстом "Обновить" или "Проверить подписку"
 start_kb = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="Обновить")]],
+    keyboard=[[KeyboardButton(text="/start")]],
     resize_keyboard=True
 )
 
