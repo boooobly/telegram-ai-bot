@@ -1,3 +1,4 @@
+from aiohttp import web
 import asyncio
 import logging
 import os
@@ -10,13 +11,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-# Получаем токен из переменной окружения
 API_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_USERNAME = "@simplify_ai"
 
-# Текст при успешной проверке
-WELCOME_TEXT = """
-✅ Спасибо за подписку!
+WELCOME_TEXT = """ ✅ Спасибо за подписку!
 
 Вот список полезных AI-сервисов из моих коротких видео:
 1. Gamma.app — Презентации с помощью ИИ
@@ -36,23 +34,19 @@ WELCOME_TEXT = """
 15. mokker.ai — Замена фона на фото с эффектом студийной съёмки
 16. pixverse.ai — Генерация видео по текстовому описанию в стиле Sora
 
-Следи за новыми публикациями на канале!
-"""
+Следи за новыми публикациями на канале! """  # Твой текст с AI-сервисами
 
-# Инициализация бота
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
-# Inline-кнопка "Перейти на канал"
 channel_button = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]
     ]
 )
 
-# Reply-кнопка "/start" с текстом "Обновить" или "Проверить подписку"
 start_kb = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="/start")]],
     resize_keyboard=True
@@ -80,10 +74,26 @@ async def cmd_start(message: types.Message):
             reply_markup=start_kb
         )
 
-# Запуск бота
+async def handle_ping(request):
+    return web.Response(text="OK")
+
+async def run_web():
+    app = web.Application()
+    app.add_routes([web.get('/', handle_ping)])
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.getenv("PORT", 8000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"Web server started on port {port}")
+
 async def main():
     logging.basicConfig(level=logging.INFO)
-    await dp.start_polling(bot)
+    # Запускаем одновременно веб-сервер и polling бота
+    await asyncio.gather(
+        dp.start_polling(bot),
+        run_web()
+    )
 
 if __name__ == "__main__":
     asyncio.run(main())
