@@ -8,8 +8,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
 
 import os
-API_TOKEN = os.getenv("BOT_TOKEN")  # Замените на ваш токен
-CHANNEL_USERNAME = "@simplify_ai"       # Ваш публичный канал
+API_TOKEN = os.getenv("BOT_TOKEN") 
+CHANNEL_USERNAME = "@simplify_ai"       
 
 WELCOME_TEXT = """
 ✅ Спасибо за подписку!
