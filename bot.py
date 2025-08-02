@@ -54,7 +54,7 @@ WELCOME_TEXT = """ ✅ Спасибо за подписку!
 35. app.topoexport.com — Создавай карту местности в пару кликов
 36. chefgpt.xyz — Создай рецепт из того, что есть в холодильнике
 37. cleanup.pictures — Легко удали объект с фото
-38. @ToolProBot — ChatGPT, Deepseek и Gemini прямо в телеграм
+38. [ToolProBot](https://t.me/ToolProBot?start=-35) — ChatGPT, Deepseek и Gemini прямо в телеграм
 
 Следи за новыми публикациями на канале! """  # Твой текст с AI-сервисами
 
@@ -119,4 +119,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
