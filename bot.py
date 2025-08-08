@@ -54,7 +54,12 @@ WELCOME_TEXT = """ ✅ Спасибо за подписку!
 35. app.topoexport.com — Создавай карту местности в пару кликов
 36. chefgpt.xyz — Создай рецепт из того, что есть в холодильнике
 37. cleanup.pictures — Легко удали объект с фото
-38. @ToolProBot — ChatGPT, Deepseek и Gemini прямо в телеграм
+38. @ToolProBot — ChatGPT5 и Gemini прямо в телеграм
+39. klingai.com — Один из лучших генераторов видео
+40. storytribeapp.com — Создавай сториборды в пару кликов
+41. gentube.app — Генерация изображений за секунды
+42. printpal.io — Создание 3D моделей по фотографии
+43. productioncrate.com — Тысячи визуальных эффектов, 3D моделей и персонажей для проектов
 
 Следи за новыми публикациями на канале! """  # Твой текст с AI-сервисами
 
@@ -119,6 +124,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
