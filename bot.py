@@ -69,6 +69,14 @@ WELCOME_TEXT = """ ✅ Спасибо за подписку!
 50. liquid.paper.design — Анимируй лого, текст (эффект жидкого металла)
 51. pixie.haus — Создавай пиксель-арты
 52. buildcores.com — Собери свой ПК с 3D визуализацией
+53. planyourroom.com — Создай проект своей комнаты
+54. startmycar.com — Вся информация про машины
+55. speech2text.ru — Видео или аудио в текст
+56. yt1s.ltd — Скачать видео с YouTube
+57. seostudio.tools — Сотни SEO инструментов 
+58. remove.photos — Редактируй изображение в браузере
+
+1. github.com/Maplespe/ExplorerBlurMica/releases — Сделай проводник прозрачным
 
 Следи за новыми публикациями на канале! """  # Твой текст с AI-сервисами
 
@@ -133,6 +141,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
