@@ -14,7 +14,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 API_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_USERNAME = "@simplify_ai"
 
-WELCOME_TEXT = """ ✅ Спасибо за подписку!
+WELCOME_TEXT = """✅ Спасибо за подписку!
 
 Вот список полезных AI-сервисов из моих коротких видео:
 1. Gamma.app — Презентации с помощью ИИ
@@ -75,22 +75,34 @@ WELCOME_TEXT = """ ✅ Спасибо за подписку!
 56. yt1s.ltd — Скачать видео с YouTube
 57. seostudio.tools — Сотни SEO инструментов 
 58. remove.photos — Редактируй изображение в браузере
+59. jitter.video — Настраиваемые анимации
+60. tools.flaex.ai — Список всех нейронок в одном месте
+61. systemrequirementslab.com — Проверь, потянет ли твой ПК игру
+62. ifixit.com — Почини всё что угодно
 
 1. github.com/Maplespe/ExplorerBlurMica/releases — Сделай проводник прозрачным
 
-Следи за новыми публикациями на канале! """  # Твой текст с AI-сервисами
+Следи за новыми публикациями на канале!"""
 
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
+# Inline кнопки
 channel_button = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]
     ]
 )
 
+update_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Обновить", callback_data="refresh")]
+    ]
+)
+
+# Reply кнопка /start
 start_kb = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="/start")]],
     resize_keyboard=True
@@ -102,6 +114,7 @@ async def cmd_start(message: types.Message):
         member = await bot.get_chat_member(CHANNEL_USERNAME, message.from_user.id)
         if member.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
             await message.answer(WELCOME_TEXT, reply_markup=start_kb)
+            await message.answer("Нажми «Обновить», чтобы снова получить список", reply_markup=update_kb)
         else:
             await message.answer(
                 "❗Чтобы получить доступ, подпишись на канал:",
@@ -117,6 +130,13 @@ async def cmd_start(message: types.Message):
             "⚠️ Произошла ошибка при проверке подписки. Убедись, что бот добавлен в канал и у него есть права.",
             reply_markup=start_kb
         )
+
+# Обработчик нажатия "Обновить"
+@router.callback_query(F.data == "refresh")
+async def refresh_list(callback: types.CallbackQuery):
+    await callback.message.answer(WELCOME_TEXT, reply_markup=start_kb)
+    await callback.message.answer("Нажми «Обновить», чтобы снова получить список", reply_markup=update_kb)
+    await callback.answer()
 
 async def handle_ping(request):
     return web.Response(text="OK")
@@ -141,9 +161,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-
-
-
