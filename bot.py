@@ -79,6 +79,7 @@ WELCOME_TEXT = """✅ Спасибо за подписку!
 60. tools.flaex.ai — Список всех нейронок в одном месте
 61. systemrequirementslab.com — Проверь, потянет ли твой ПК игру
 62. ifixit.com — Почини всё что угодно
+63. unicorn.studio — Крутые анимации для твоих проектов
 
 1. github.com/Maplespe/ExplorerBlurMica/releases — Сделай проводник прозрачным
 
@@ -161,3 +162,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
