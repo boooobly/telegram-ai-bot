@@ -14,7 +14,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 API_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_USERNAME = "@simplify_ai"
 
-WELCOME_TEXT = """✅ Спасибо за подписку!
+WELCOME_TEXT = """
 
 Вот список полезных AI-сервисов из моих коротких видео:
 1. Gamma.app — Презентации с помощью ИИ
@@ -80,10 +80,11 @@ WELCOME_TEXT = """✅ Спасибо за подписку!
 61. systemrequirementslab.com — Проверь, потянет ли твой ПК игру
 62. ifixit.com — Почини всё что угодно
 63. unicorn.studio — Крутые анимации для твоих проектов
+64. smart.servier.com — Тысячи изображение по медицине и биологии
 
 1. github.com/Maplespe/ExplorerBlurMica/releases — Сделай проводник прозрачным
 
-Следи за новыми публикациями на канале!"""
+"""
 
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
@@ -162,6 +163,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
