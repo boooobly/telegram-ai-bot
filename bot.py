@@ -86,6 +86,7 @@ SERVICES = [
     "unicorn.studio — Крутые анимации для твоих проектов",
     "smart.servier.com — Тысячи изображение по медицине и биологии",
     "opus.pro — Делай нарезки из подкастов, интервью или просто длинных видео",
+    "app.paperanimator.com/text-match-cut — Бумажная анимация за секунды",
 ]
 
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -209,4 +210,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
