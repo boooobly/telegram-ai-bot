@@ -15,12 +15,16 @@ from aiogram.exceptions import TelegramBadRequest
 API_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_USERNAME = "@simplify_ai"
 
-# Приветствие/завершение
-INTRO_TEXT = "✅ Спасибо за подписку!\n\nВот список полезных AI-сервисов из моих коротких видео:\n"
+# --- Настройки текста ---
+INTRO_TEXT = "✅ Спасибо за подписку!\n\nСмотри подборки по рубрикам ниже:\n"
 OUTRO_TEXT = "\nСледи за новыми публикациями на канале!"
 
-# ВЕСЬ СПИСОК СЕРВИСОВ (пронумеруем автоматически)
-SERVICES = [
+# Вставляем невидимый символ перед "http" чтобы Telegram не тянул превью
+def no_preview(text: str) -> str:
+    return text.replace("http", "\u200bhttp")
+
+# --- Рубрики (заполняй своими пунктами) ---
+LIFE_BEST = [
     "Gamma.app — Презентации с помощью ИИ",
     "scribbr.com — Проверка грамматики, плагиата и оформление текста",
     "aistudio.google.com — Личный AI-помощник на экране в реальном времени",
@@ -90,54 +94,63 @@ SERVICES = [
     "1aauto.com — Почини своё авто самостоятельно",
 ]
 
+FUN_BEST = [
+    "slowroads.io — Бесконечный симулятор вождения",
+    "3dtuning.com — Тюнингуй любые машины",
+    "eaglecraft.com — Майнкрафт прямо в браузере",
+]
+
+WIN_TIPS = [
+    "github.com/Maplespe/ExplorerBlurMica/releases — Прозрачный проводник (Mica/Blur)",
+]
+
+# --- Кнопки ---
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
-# Кнопки
 channel_button = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]
-    ]
+    inline_keyboard=[[InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]]
 )
-
 update_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text="Обновить", callback_data="refresh")]
-    ]
+    inline_keyboard=[[InlineKeyboardButton(text="Обновить", callback_data="refresh")]]
 )
+start_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="/start")]], resize_keyboard=True)
 
-start_kb = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="/start")]],
-    resize_keyboard=True
-)
-
-# Отправка списка частями (по 50 пунктов)
-async def send_services_list(chat_id: int):
+# --- Вспомогательная отправка: рубрику кусками по 50 ---
+async def send_category(chat_id: int, title: str, items: list[str], prefix: str = "", suffix: str = ""):
+    if not items:
+        return
     chunk_size = 50
-    total = len(SERVICES)
+    total = len(items)
     for i in range(0, total, chunk_size):
-        chunk = SERVICES[i:i + chunk_size]
-        body = "\n".join([f"{i + j + 1}. {srv}" for j, srv in enumerate(chunk)])
-
-        # добавляем префиксы/суффиксы в первый/последний блок
-        text = body
-        if i == 0:
-            text = INTRO_TEXT + text
-        if i + chunk_size >= total:
-            text = text + OUTRO_TEXT
+        chunk = items[i : i + chunk_size]
+        body = "\n".join([f"{i + j + 1}. {v}" for j, v in enumerate(chunk)])
+        text = f"{title}\n{body}"
+        if prefix and i == 0:
+            text = prefix + text
+        if suffix and (i + chunk_size >= total):
+            text = text + suffix
 
         await bot.send_message(
             chat_id=chat_id,
-            text=text,
-            disable_web_page_preview=True  # <- отключаем превью ссылок
+            text=no_preview(text),
+            disable_web_page_preview=True
         )
 
+# --- Отправка всех рубрик в нужном порядке ---
+async def send_all_categories(chat_id: int):
+    # 1) Упростят жизнь   2) Спасут от скуки   3) Фишки Windows
+    await send_category(chat_id, "💡 Лучшие сайты, которые упростят жизнь:", LIFE_BEST, prefix=INTRO_TEXT)
+    await send_category(chat_id, "🎯 Лучшие сайты, которые спасут от скуки:", FUN_BEST)
+    await send_category(chat_id, "🪟 Фишки для Windows, о которых ты должен знать:", WIN_TIPS, suffix=OUTRO_TEXT)
+
+# --- Команда /start с проверкой подписки ---
 @router.message(F.text == "/start")
 async def cmd_start(message: types.Message):
     try:
-        # аккуратно проверяем подписку
+        # Аккуратно проверяем подписку
         is_subscribed = False
         try:
             member = await bot.get_chat_member(CHANNEL_USERNAME, message.from_user.id)
@@ -148,13 +161,12 @@ async def cmd_start(message: types.Message):
                 ChatMemberStatus.CREATOR,
             )
         except TelegramBadRequest:
-            # для неподписанных Telegram часто бросает BadRequest -> считаем «не подписан»
             is_subscribed = False
 
         if is_subscribed:
-            await send_services_list(message.chat.id)
+            await send_all_categories(message.chat.id)
             await message.answer(
-                "Нажми «Обновить», чтобы снова получить список",
+                "Нажми «Обновить», чтобы снова получить списки по рубрикам",
                 reply_markup=update_kb,
                 disable_web_page_preview=True
             )
@@ -169,7 +181,6 @@ async def cmd_start(message: types.Message):
                 reply_markup=start_kb,
                 disable_web_page_preview=True
             )
-
     except Exception as e:
         logging.error(f"Ошибка при проверке подписки: {e}")
         await message.answer(
@@ -178,17 +189,18 @@ async def cmd_start(message: types.Message):
             disable_web_page_preview=True
         )
 
+# --- Обработчик inline-кнопки «Обновить» ---
 @router.callback_query(F.data == "refresh")
 async def refresh_list(callback: types.CallbackQuery):
-    await send_services_list(callback.message.chat.id)
+    await send_all_categories(callback.message.chat.id)
     await callback.message.answer(
-        "Нажми «Обновить», чтобы снова получить список",
+        "Нажми «Обновить», чтобы снова получить списки по рубрикам",
         reply_markup=update_kb,
         disable_web_page_preview=True
     )
     await callback.answer()
 
-# Ping endpoint для Render
+# --- Ping endpoint для Render (чтобы UptimeRobot будил сервис) ---
 async def handle_ping(request):
     return web.Response(text="OK")
 
@@ -211,6 +223,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
