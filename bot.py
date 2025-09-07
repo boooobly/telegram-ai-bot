@@ -93,6 +93,7 @@ LIFE_BEST = [
     "app.paperanimator.com/text-match-cut — Бумажная анимация за секунды",
     "1aauto.com — Почини своё авто самостоятельно",
     "collov.ai — Преобрази свою комнату с этой нейронкой в пару кликов",
+    "insmind.com — Сотни AI инструментов. От генерации изображений, до генерации видео",
 ]
 
 FUN_BEST = [
@@ -224,4 +225,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
