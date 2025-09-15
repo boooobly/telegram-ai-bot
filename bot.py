@@ -2,28 +2,39 @@ from aiohttp import web
 import asyncio
 import logging
 import os
+import json
 
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
 from aiogram.enums.chat_member_status import ChatMemberStatus
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram import Router, F
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Update
 from aiogram.exceptions import TelegramBadRequest
 
+# === Переменные окружения ===
 API_TOKEN = os.getenv("BOT_TOKEN")
+APP_URL = os.getenv("APP_URL")  # например: https://telegram-ai-bot-tptq.onrender.com
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "change_me")  # задай в Render -> Environment
+PORT = int(os.getenv("PORT", 8000))
+
+if not API_TOKEN or not APP_URL:
+    raise RuntimeError("BOT_TOKEN и APP_URL должны быть заданы в переменных окружения.")
+
 CHANNEL_USERNAME = "@simplify_ai"
 
-# --- Настройки текста ---
-INTRO_TEXT = "✅ Спасибо за подписку!\n\nСмотри подборки по рубрикам ниже:\n"
-OUTRO_TEXT = "\nСледи за новыми публикациями на канале!"
+# === Тексты ===
+WELCOME = (
+    "✅ Добро пожаловать!\n\n"
+    "Выбери нужную рубрику ниже 👇"
+)
+OUTRO = "\nСледи за новыми публикациями на канале!"
 
-# Вставляем невидимый символ перед "http" чтобы Telegram не тянул превью
+# Вставляем невидимый символ перед "http", чтобы Telegram не тянул превью
 def no_preview(text: str) -> str:
     return text.replace("http", "\u200bhttp")
 
-# --- Рубрики (заполняй своими пунктами) ---
+# === Данные рубрик (можно вынести в data.json при желании) ===
 LIFE_BEST = [
     "Gamma.app — Презентации с помощью ИИ",
     "scribbr.com — Проверка грамматики, плагиата и оформление текста",
@@ -100,7 +111,6 @@ LIFE_BEST = [
     "tripo3d.ai — Создавай 3D модели по текстовому запросу или по изображению",
     "posemy.art — Создавай позы персонажей или бери готовые позы",
     "home.by.me — Создай планировку для своей квартиры",
-    "whitescreen.online — Проверка битых пикселей, экран обновления Windows, и другое",
 ]
 
 FUN_BEST = [
@@ -110,134 +120,190 @@ FUN_BEST = [
 ]
 
 WIN_TIPS = [
-    "github.com/Maplespe/ExplorerBlurMica/releases — Прозрачный проводник (Mica/Blur)",
+    "github.com/Maplespe/ExplorerBlurMica/releases — Прозрачный Проводник (Mica/Blur)",
 ]
 
-# --- Кнопки ---
+CATEGORIES = {
+    "life": {"title": "💡 Лучшие сайты, которые упростят жизнь:", "items": LIFE_BEST},
+    "fun":  {"title": "🎯 Лучшие сайты, которые спасут от скуки:", "items": FUN_BEST},
+    "win":  {"title": "🪟 Фишки Windows, о которых ты должен знать:", "items": WIN_TIPS},
+}
+
+# === Инициализация aiogram ===
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
-router = Router()
-dp.include_router(router)
 
+# === Кнопки ===
 channel_button = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]]
 )
-update_kb = InlineKeyboardMarkup(
-    inline_keyboard=[[InlineKeyboardButton(text="Обновить", callback_data="refresh")]]
-)
-start_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="/start")]], resize_keyboard=True)
 
-# --- Вспомогательная отправка: рубрику кусками по 50 ---
-async def send_category(chat_id: int, title: str, items: list[str], prefix: str = "", suffix: str = ""):
+def main_menu_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="💡 Лучшие сайты", callback_data="show:life")],
+            [InlineKeyboardButton(text="🎯 Сайты от скуки", callback_data="show:fun")],
+            [InlineKeyboardButton(text="🪟 Фишки Windows", callback_data="show:win")],
+        ]
+    )
+
+def section_menu_kb(current: str) -> InlineKeyboardMarkup:
+    # сначала Обновить, затем два других раздела
+    buttons = [[InlineKeyboardButton(text="🔁 Обновить раздел", callback_data=f"refresh:{current}")]]
+    for key, label in (("life", "💡 Лучшие сайты"), ("fun", "🎯 Сайты от скуки"), ("win", "🪟 Фишки Windows")):
+        if key != current:
+            buttons.append([InlineKeyboardButton(text=label, callback_data=f"show:{key}")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+# === Вспомогательные функции ===
+async def is_user_subscribed(user_id: int) -> bool:
+    try:
+        member = await bot.get_chat_member(CHANNEL_USERNAME, user_id)
+        status = getattr(member, "status", None)
+        return status in (
+            ChatMemberStatus.MEMBER,
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.CREATOR,
+        )
+    except TelegramBadRequest:
+        # Неподписанные часто дают BadRequest – трактуем как «не подписан»
+        return False
+
+async def send_category(chat_id: int, key: str):
+    data = CATEGORIES[key]
+    title = data["title"]
+    items = data["items"]
     if not items:
+        await bot.send_message(chat_id, no_preview(f"{title}\n(пока пусто)"), disable_web_page_preview=True)
         return
+
     chunk_size = 50
     total = len(items)
     for i in range(0, total, chunk_size):
         chunk = items[i : i + chunk_size]
         body = "\n".join([f"{i + j + 1}. {v}" for j, v in enumerate(chunk)])
         text = f"{title}\n{body}"
-        if prefix and i == 0:
-            text = prefix + text
-        if suffix and (i + chunk_size >= total):
-            text = text + suffix
+        if i + chunk_size >= total:
+            text += OUTRO
+        await bot.send_message(chat_id, no_preview(text), disable_web_page_preview=True)
 
-        await bot.send_message(
-            chat_id=chat_id,
-            text=no_preview(text),
-            disable_web_page_preview=True
-        )
-
-# --- Отправка всех рубрик в нужном порядке ---
-async def send_all_categories(chat_id: int):
-    # 1) Упростят жизнь   2) Спасут от скуки   3) Фишки Windows
-    await send_category(chat_id, "💡 Лучшие сайты, которые упростят жизнь:", LIFE_BEST, prefix=INTRO_TEXT)
-    await send_category(chat_id, "🎯 Лучшие сайты, которые спасут от скуки:", FUN_BEST)
-    await send_category(chat_id, "🪟 Фишки для Windows, о которых ты должен знать:", WIN_TIPS, suffix=OUTRO_TEXT)
-
-# --- Команда /start с проверкой подписки ---
-@router.message(F.text == "/start")
+# === Хэндлеры ===
+@dp.message(F.text == "/start")
 async def cmd_start(message: types.Message):
     try:
-        # Аккуратно проверяем подписку
-        is_subscribed = False
-        try:
-            member = await bot.get_chat_member(CHANNEL_USERNAME, message.from_user.id)
-            status = getattr(member, "status", None)
-            is_subscribed = status in (
-                ChatMemberStatus.MEMBER,
-                ChatMemberStatus.ADMINISTRATOR,
-                ChatMemberStatus.CREATOR,
-            )
-        except TelegramBadRequest:
-            is_subscribed = False
-
-        if is_subscribed:
-            await send_all_categories(message.chat.id)
-            await message.answer(
-                "Нажми «Обновить», чтобы снова получить списки по рубрикам",
-                reply_markup=update_kb,
-                disable_web_page_preview=True
-            )
+        if await is_user_subscribed(message.from_user.id):
+            await message.answer(no_preview(WELCOME), reply_markup=main_menu_kb(), disable_web_page_preview=True)
         else:
             await message.answer(
-                "❗Чтобы получить доступ, подпишись на канал:",
+                "❗Чтобы получить доступ к рубрикам, подпишись на канал:",
                 reply_markup=channel_button,
                 disable_web_page_preview=True
             )
-            await message.answer(
-                "🔁 После подписки нажми «Проверить подписку» ниже ⬇️",
-                reply_markup=start_kb,
-                disable_web_page_preview=True
-            )
+            await message.answer("После подписки снова нажми /start ⬇️", disable_web_page_preview=True)
     except Exception as e:
-        logging.error(f"Ошибка при проверке подписки: {e}")
+        logging.exception(f"Ошибка в /start: {e}")
         await message.answer(
-            "⚠️ Произошла ошибка при проверке подписки. Убедись, что бот добавлен в канал и у него есть права.",
-            reply_markup=start_kb,
+            "⚠️ Произошла ошибка. Проверь, что бот добавлен в канал и у него есть права.",
             disable_web_page_preview=True
         )
 
-# --- Обработчик inline-кнопки «Обновить» ---
-@router.callback_query(F.data == "refresh")
-async def refresh_list(callback: types.CallbackQuery):
-    await send_all_categories(callback.message.chat.id)
+@dp.callback_query(F.data.startswith("show:"))
+async def on_show(callback: types.CallbackQuery):
+    key = callback.data.split(":", 1)[1]
+    if key not in CATEGORIES:
+        await callback.answer("Неизвестная рубрика", show_alert=True)
+        return
+
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:",
+            reply_markup=channel_button,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
+    await send_category(callback.message.chat.id, key)
     await callback.message.answer(
-        "Нажми «Обновить», чтобы снова получить списки по рубрикам",
-        reply_markup=update_kb,
+        "Выбери следующий раздел или обнови текущий:",
+        reply_markup=section_menu_kb(key),
         disable_web_page_preview=True
     )
     await callback.answer()
 
-# --- Ping endpoint для Render (чтобы UptimeRobot будил сервис) ---
+@dp.callback_query(F.data.startswith("refresh:"))
+async def on_refresh(callback: types.CallbackQuery):
+    key = callback.data.split(":", 1)[1]
+    if key not in CATEGORIES:
+        await callback.answer("Неизвестная рубрика", show_alert=True)
+        return
+
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:",
+            reply_markup=channel_button,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
+    await send_category(callback.message.chat.id, key)
+    await callback.message.answer(
+        "Выбери следующий раздел или обнови текущий:",
+        reply_markup=section_menu_kb(key),
+        disable_web_page_preview=True
+    )
+    await callback.answer("Обновлено")
+
+# === Webhook server (aiohttp) ===
 async def handle_ping(request):
     return web.Response(text="OK")
 
+async def webhook_handler(request: web.Request):
+    # проверка секрета из заголовка
+    secret = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+    if secret != WEBHOOK_SECRET:
+        return web.Response(status=403, text="Forbidden")
+
+    try:
+        data = await request.json()
+        update = Update.model_validate(data)
+    except Exception as e:
+        logging.exception(f"Bad update payload: {e}")
+        return web.Response(status=400, text="Bad Request")
+
+    await dp.feed_update(bot, update)
+    return web.Response(text="OK")
+
+async def setup_webhook():
+    # Устанавливаем webhook в Telegram
+    url = f"{APP_URL}/webhook/{WEBHOOK_SECRET}"
+    logging.info(f"Setting webhook to: {url}")
+    await bot.set_webhook(
+        url=url,
+        secret_token=WEBHOOK_SECRET,
+        drop_pending_updates=True
+    )
+
 async def run_web():
     app = web.Application()
-    app.add_routes([web.get('/', handle_ping)])
+    app.router.add_get("/", handle_ping)
+    app.router.add_post(f"/webhook/{WEBHOOK_SECRET}", webhook_handler)
+
     runner = web.AppRunner(app)
     await runner.setup()
-    port = int(os.getenv("PORT", 8000))
-    site = web.TCPSite(runner, '0.0.0.0', port)
+    site = web.TCPSite(runner, host="0.0.0.0", port=PORT)
     await site.start()
-    print(f"Web server started on port {port}")
+    logging.info(f"Web server started on port {PORT}")
+
+    # держим сервер «вечно»
+    while True:
+        await asyncio.sleep(3600)
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    await asyncio.gather(
-        dp.start_polling(bot),
-        run_web()
-    )
+    await setup_webhook()
+    await run_web()
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-
-
-
-
-
-
