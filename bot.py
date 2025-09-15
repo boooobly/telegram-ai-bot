@@ -8,7 +8,10 @@ from aiogram.enums import ParseMode
 from aiogram.enums.chat_member_status import ChatMemberStatus
 from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Update
+from aiogram.types import (
+    InlineKeyboardMarkup, InlineKeyboardButton, Update,
+    ReplyKeyboardMarkup, KeyboardButton
+)
 from aiogram.exceptions import TelegramBadRequest
 
 # === Env ===
@@ -25,6 +28,7 @@ CHANNEL_USERNAME = "@simplify_ai"
 # === Texts ===
 WELCOME = "✅ Добро пожаловать!\n\nВыбери нужную рубрику ниже 👇"
 OUTRO = "\nСледи за новыми публикациями на канале!"
+HOME_BTN_TEXT = "🏠 Главное меню"
 
 def no_preview(text: str) -> str:
     """Отрубаем предпросмотр ссылок даже упрямых: вставляем zero-width space перед http"""
@@ -130,10 +134,13 @@ bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTM
 dp = Dispatcher(storage=MemoryStorage())
 
 # === Keyboards ===
-channel_button = InlineKeyboardMarkup(
-    inline_keyboard=[[InlineKeyboardButton(text="Перейти на канал", url="https://t.me/simplify_ai")]]
+# Reply-клавиатура (всегда снизу)
+home_reply_kb = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text=HOME_BTN_TEXT)]],
+    resize_keyboard=True
 )
 
+# Главное меню (inline)
 def main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -143,11 +150,9 @@ def main_menu_kb() -> InlineKeyboardMarkup:
         ]
     )
 
+# Кнопки раздела (inline): Обновить + две другие рубрики
 def section_menu_kb(current: str) -> InlineKeyboardMarkup:
-    buttons = [
-        [InlineKeyboardButton(text="🔁 Обновить раздел", callback_data=f"refresh:{current}")],
-        [InlineKeyboardButton(text="🏠 Главное меню", callback_data="home")]
-    ]
+    buttons = [[InlineKeyboardButton(text="🔁 Обновить раздел", callback_data=f"refresh:{current}")]]
     for key, label in (("life", "💡 Лучшие сайты"), ("fun", "🎯 Сайты от скуки"), ("win", "🪟 Фишки Windows")):
         if key != current:
             buttons.append([InlineKeyboardButton(text=label, callback_data=f"show:{key}")])
@@ -178,33 +183,58 @@ async def send_category(chat_id: int, key: str):
         text = f"{title}\n{body}"
         if i + chunk_size >= total:
             text += OUTRO
-        await bot.send_message(chat_id, no_preview(text), disable_web_page_preview=True)
+        await bot.send_message(
+            chat_id,
+            no_preview(text),
+            disable_web_page_preview=True
+        )
+
+async def send_main_menu(chat_id: int):
+    """Выводит приветствие и 3 inline-кнопки разделов, + reply-клавиатура снизу."""
+    await bot.send_message(
+        chat_id,
+        no_preview(WELCOME),
+        reply_markup=main_menu_kb(),
+        disable_web_page_preview=True
+    )
 
 # === Handlers ===
 @dp.message(F.text == "/start")
 async def cmd_start(message: types.Message):
     try:
         if await is_user_subscribed(message.from_user.id):
-            await message.answer(no_preview(WELCOME), reply_markup=main_menu_kb(), disable_web_page_preview=True)
+            await send_main_menu(message.chat.id)
         else:
-            await message.answer("❗Чтобы получить доступ к рубрикам, подпишись на канал:",
-                                 reply_markup=channel_button, disable_web_page_preview=True)
-            await message.answer("После подписки снова нажми /start ⬇️", disable_web_page_preview=True)
+            # Показываем клавиатуру «Главное меню» тоже (пусть будет всегда)
+            await message.answer(
+                "❗Чтобы получить доступ к рубрикам, подпишись на канал:\nhttps://t.me/simplify_ai",
+                reply_markup=home_reply_kb,
+                disable_web_page_preview=True
+            )
+            await message.answer(
+                "После подписки снова нажми /start или кнопку «🏠 Главное меню» ⬇️",
+                reply_markup=home_reply_kb,
+                disable_web_page_preview=True
+            )
     except Exception as e:
         logging.exception(f"Ошибка в /start: {e}")
-        await message.answer("⚠️ Произошла ошибка. Проверь, что бот добавлен в канал и у него есть права.",
-                             disable_web_page_preview=True)
+        await message.answer(
+            "⚠️ Произошла ошибка. Проверь, что бот добавлен в канал и у него есть права.",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
 
-@dp.callback_query(F.data == "home")
-async def go_home(callback: types.CallbackQuery):
-    # Возврат в главное меню
-    if not await is_user_subscribed(callback.from_user.id):
-        await callback.message.answer("❗Чтобы открыть разделы, подпишись на канал:",
-                                      reply_markup=channel_button, disable_web_page_preview=True)
-        await callback.answer()
-        return
-    await callback.message.answer(no_preview(WELCOME), reply_markup=main_menu_kb(), disable_web_page_preview=True)
-    await callback.answer("Главное меню")
+# Нажатие на нижнюю reply-кнопку «Главное меню»
+@dp.message(F.text == HOME_BTN_TEXT)
+async def on_home_button(message: types.Message):
+    if await is_user_subscribed(message.from_user.id):
+        await send_main_menu(message.chat.id)
+    else:
+        await message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
 
 @dp.callback_query(F.data.startswith("show:"))
 async def on_show(callback: types.CallbackQuery):
@@ -213,14 +243,20 @@ async def on_show(callback: types.CallbackQuery):
         await callback.answer("Неизвестная рубрика", show_alert=True)
         return
     if not await is_user_subscribed(callback.from_user.id):
-        await callback.message.answer("❗Чтобы открыть разделы, подпишись на канал:",
-                                      reply_markup=channel_button, disable_web_page_preview=True)
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
         await callback.answer()
         return
 
     await send_category(callback.message.chat.id, key)
-    await callback.message.answer("Выбери следующий раздел или обнови текущий:",
-                                  reply_markup=section_menu_kb(key), disable_web_page_preview=True)
+    await callback.message.answer(
+        "Выбери следующий раздел или обнови текущий:",
+        reply_markup=section_menu_kb(key),
+        disable_web_page_preview=True
+    )
     await callback.answer()
 
 @dp.callback_query(F.data.startswith("refresh:"))
@@ -230,14 +266,20 @@ async def on_refresh(callback: types.CallbackQuery):
         await callback.answer("Неизвестная рубрика", show_alert=True)
         return
     if not await is_user_subscribed(callback.from_user.id):
-        await callback.message.answer("❗Чтобы открыть разделы, подпишись на канал:",
-                                      reply_markup=channel_button, disable_web_page_preview=True)
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
         await callback.answer()
         return
 
     await send_category(callback.message.chat.id, key)
-    await callback.message.answer("Выбери следующий раздел или обнови текущий:",
-                                  reply_markup=section_menu_kb(key), disable_web_page_preview=True)
+    await callback.message.answer(
+        "Выбери следующий раздел или обнови текущий:",
+        reply_markup=section_menu_kb(key),
+        disable_web_page_preview=True
+    )
     await callback.answer("Обновлено")
 
 # === Webhook server ===
