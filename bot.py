@@ -117,6 +117,7 @@ FUN_BEST = [
     "slowroads.io — Бесконечный симулятор вождения",
     "3dtuning.com — Тюнингуй любые машины",
     "eaglecraft.com — Майнкрафт прямо в браузере",
+    "zty.pe — Прокачай свой скилл набора текста в игровом формате",
 ]
 
 WIN_TIPS = [
@@ -335,3 +336,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
