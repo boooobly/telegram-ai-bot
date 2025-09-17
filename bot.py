@@ -113,6 +113,7 @@ LIFE_BEST = [
     "home.by.me — Создай планировку для своей квартиры",
     "whitescreen.online — Проверь битые пиксели, поставь windows обновляться или разыграй друга",
     "uiball.com — Элементы загрузки для твоих проектов",
+    "motormatchup.com — Сравни машины",
 ]
 
 FUN_BEST = [
@@ -338,6 +339,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
