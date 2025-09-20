@@ -115,6 +115,7 @@ LIFE_BEST = [
     "uiball.com — Элементы загрузки для твоих проектов",
     "motormatchup.com — Сравни машины",
     "animagraffs.com — Десятки примеров, как устроенны сложные вещи в 3D визуализации",
+    "dungeonscrawl.com — Рисуй карты в разных стиляй под свой вкус",
 ]
 
 FUN_BEST = [
@@ -340,6 +341,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
