@@ -298,6 +298,25 @@ async def on_refresh(callback: types.CallbackQuery):
     )
     await callback.answer("Обновлено")
 
+# --- Fallback-хэндлер для любых непонятных сообщений ---
+@dp.message()
+async def fallback_message(message: types.Message):
+    # Сюда попадает всё, что не совпало с другими хэндлерами:
+    # произвольный текст, медиа, стикеры, голосовые, команды и т.п.
+    await message.answer(
+        "Я понимаю только команду /start и нажатия на кнопки.\n"
+        "Нажми «🏠 Главное меню» ниже, чтобы вернуться к выбору разделов.",
+        reply_markup=home_reply_kb,
+        disable_web_page_preview=True
+    )
+
+# --- Fallback-хэндлер для любых непонятных callback-кнопок ---
+@dp.callback_query()
+async def fallback_callback(callback: types.CallbackQuery):
+    # Например, если кнопка устарела или колбэк неизвестен
+    await callback.answer("Кнопка больше неактивна. Используй «🏠 Главное меню».", show_alert=False)
+
+
 # === Webhook server ===
 async def handle_ping(request):  # healthcheck
     return web.Response(text="OK")
@@ -343,6 +362,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
