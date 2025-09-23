@@ -118,6 +118,7 @@ LIFE_BEST = [
     "dungeonscrawl.com — Рисуй карты в разных стиляй под свой вкус",
     "myretrotvs.com — Погрузись в детсво с этим ретро телевизором",
     "chemequations.com — Реши любые химические уравнения",
+    "cymath.com — Реши любое математическое уравнение",
 ]
 
 FUN_BEST = [
@@ -362,6 +363,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
