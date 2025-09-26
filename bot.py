@@ -120,6 +120,7 @@ LIFE_BEST = [
     "chemequations.com — Реши любые химические уравнения",
     "cymath.com — Реши любое математическое уравнение",
     "freesewing.eu — Создавай свои раскройки для одежды в пару кликов",
+    "24ai.tech — Десятки AI инструментов для изображений",
 ]
 
 FUN_BEST = [
@@ -365,6 +366,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
