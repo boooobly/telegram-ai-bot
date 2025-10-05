@@ -128,6 +128,7 @@ LIFE_BEST = [
     "kimi.com — Создавай презентации в пару кликов",
     "thetoymaker.com — Создавай собственные бумажные игрушки",
     "sketchfab.com — Тысячи 3D моделей на любой вкус",
+    "kiddoworksheets.com — Создавай задачки для детей или бери уже готовые",
 ]
 
 FUN_BEST = [
@@ -373,6 +374,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
