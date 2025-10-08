@@ -131,6 +131,7 @@ LIFE_BEST = [
     "kiddoworksheets.com — Создавай задачки для детей или бери уже готовые",
     "autodraw.com — Сделай из наброска, готовый рисунок",
     "foldbook.art — Создавай арт-объекты из книг",
+    "www.textstudio.com — Крутые дизайны для текста, баннеры, постеры и др.",
 ]
 
 FUN_BEST = [
@@ -376,6 +377,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
