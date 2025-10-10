@@ -133,6 +133,7 @@ LIFE_BEST = [
     "foldbook.art — Создавай арт-объекты из книг",
     "textstudio.com — Крутые дизайны для текста, баннеры, постеры и др.",
     "bitmap.designfamilymarket.com — Обрабокта фотографии в bit стиле",
+    "science.nasa.gov/specials/your-name-in-landsat — Напиши своё имя из ландшафтов на Земле",
 ]
 
 FUN_BEST = [
@@ -378,6 +379,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
