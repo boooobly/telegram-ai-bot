@@ -136,6 +136,7 @@ LIFE_BEST = [
     "science.nasa.gov/specials/your-name-in-landsat — Напиши своё имя из ландшафтов на Земле",
     "hera.video — Крутые моушн дизайны за пару кликов",
     "trace.moe — Найди аниме по скриншоту",
+    "app.emergent.sh — Создавай мобильные приложения за 1 промпт",
 ]
 
 FUN_BEST = [
@@ -381,6 +382,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
