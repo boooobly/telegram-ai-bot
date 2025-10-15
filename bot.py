@@ -137,6 +137,8 @@ LIFE_BEST = [
     "hera.video — Крутые моушн дизайны за пару кликов",
     "trace.moe — Найди аниме по скриншоту",
     "app.emergent.sh — Создавай мобильные приложения за 1 промпт",
+    "texturelabs.org — Тысячи бесплатных текстур",
+    "photopea.com — Бесплатный фотошоп, но в браузере",
 ]
 
 FUN_BEST = [
@@ -382,6 +384,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
