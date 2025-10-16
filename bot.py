@@ -139,6 +139,7 @@ LIFE_BEST = [
     "app.emergent.sh — Создавай мобильные приложения за 1 промпт",
     "texturelabs.org — Тысячи бесплатных текстур",
     "photopea.com — Бесплатный фотошоп, но в браузере",
+    "huggingface.co/spaces/ovi054/image-to-prompt — Изображение в промпт",
 ]
 
 FUN_BEST = [
@@ -384,6 +385,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
