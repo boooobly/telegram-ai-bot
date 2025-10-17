@@ -148,6 +148,7 @@ FUN_BEST = [
     "eaglecraft.com — Майнкрафт прямо в браузере",
     "zty.pe — Прокачай свой скилл набора текста в игровом формате",
     "oskarstalberg.com/Townscaper — Построй свой остров",
+    "geo-fs.com — Симулятор пилота самолета",
 ]
 
 WIN_TIPS = [
@@ -385,6 +386,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
