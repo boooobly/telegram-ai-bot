@@ -140,6 +140,7 @@ LIFE_BEST = [
     "texturelabs.org — Тысячи бесплатных текстур",
     "photopea.com — Бесплатный фотошоп, но в браузере",
     "huggingface.co/spaces/ovi054/image-to-prompt — Изображение в промпт",
+    "creativemode.net — Создавай моды для майнкрафта",
 ]
 
 FUN_BEST = [
@@ -386,6 +387,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
