@@ -142,6 +142,7 @@ LIFE_BEST = [
     "huggingface.co/spaces/ovi054/image-to-prompt — Изображение в промпт",
     "creativemode.net — Создавай моды для майнкрафта",
     "dimensions.com — Огромная библиотека данных по любым предметам, личностям, технике и др.",
+    "chathub.gg — Все нейронки в одном месте - claude, chatgpt, grok и др. ооочень много других",
 ]
 
 FUN_BEST = [
@@ -388,6 +389,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
