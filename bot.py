@@ -143,6 +143,7 @@ LIFE_BEST = [
     "creativemode.net — Создавай моды для майнкрафта",
     "dimensions.com — Огромная библиотека данных по любым предметам, личностям, технике и др.",
     "chathub.gg — Все нейронки в одном месте - claude, chatgpt, grok и др. ооочень много других",
+    "uiverse.io — Сотни UI эллементов с отрытым исходным кодом",
 ]
 
 FUN_BEST = [
@@ -389,6 +390,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
