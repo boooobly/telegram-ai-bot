@@ -144,6 +144,7 @@ LIFE_BEST = [
     "dimensions.com — Огромная библиотека данных по любым предметам, личностям, технике и др.",
     "chathub.gg — Все нейронки в одном месте - claude, chatgpt, grok и др. ооочень много других",
     "uiverse.io — Сотни UI эллементов с отрытым исходным кодом",
+    "text-to-cad.zoo.dev — Создавай 3D модели по текстовому запросу",
 ]
 
 FUN_BEST = [
@@ -390,6 +391,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
