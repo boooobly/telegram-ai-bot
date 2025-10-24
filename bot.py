@@ -146,6 +146,7 @@ LIFE_BEST = [
     "uiverse.io — Сотни UI эллементов с отрытым исходным кодом",
     "text-to-cad.zoo.dev — Создавай 3D модели по текстовому запросу",
     "biodigital.com — Изучай анатомию на 3D моделях",
+    "mult.dev — Трэвел анимация за пару кликов",
 ]
 
 FUN_BEST = [
@@ -392,6 +393,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
