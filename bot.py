@@ -148,6 +148,7 @@ LIFE_BEST = [
     "biodigital.com — Изучай анатомию на 3D моделях",
     "mult.dev — Трэвел анимация за пару кликов",
     "bananaprompts.xyz — Тысячи промптов для nanobanana",
+    "chunkbase.com — Узнай по своему сиду всё о мире",
 ]
 
 FUN_BEST = [
@@ -394,6 +395,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
