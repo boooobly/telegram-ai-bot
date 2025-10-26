@@ -158,6 +158,7 @@ FUN_BEST = [
     "zty.pe — Прокачай свой скилл набора текста в игровом формате",
     "oskarstalberg.com/Townscaper — Построй свой остров",
     "geo-fs.com — Симулятор пилота самолета",
+    "drift-hunters.co — Симулятор дрифта",
 ]
 
 WIN_TIPS = [
@@ -395,6 +396,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
