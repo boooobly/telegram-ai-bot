@@ -162,6 +162,7 @@ FUN_BEST = [
     "oskarstalberg.com/Townscaper — Построй свой остров",
     "geo-fs.com — Симулятор пилота самолета",
     "drift-hunters.co — Симулятор дрифта",
+    "hordes.io — Полноценная MMORPG в твоём браузере",
 ]
 
 WIN_TIPS = [
@@ -399,6 +400,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
