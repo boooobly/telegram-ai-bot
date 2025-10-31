@@ -154,6 +154,7 @@ LIFE_BEST = [
     "spacetypegenerator.com — Анимируй и настраивай свой текст",
     "uchinoko-maker.jp — Аватарка для твоего питомца",
     "theresanaiforthat.com — Найди нужную нейросеть",
+    "sketch.metademolab.com — Оживи детский рисунок",
 ]
 
 FUN_BEST = [
@@ -402,6 +403,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
