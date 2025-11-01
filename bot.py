@@ -155,6 +155,7 @@ LIFE_BEST = [
     "uchinoko-maker.jp — Аватарка для твоего питомца",
     "theresanaiforthat.com — Найди нужную нейросеть",
     "sketch.metademolab.com — Оживи детский рисунок",
+    "formia.so — Преврати свой логотип в 3D объект",
 ]
 
 FUN_BEST = [
@@ -403,6 +404,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
