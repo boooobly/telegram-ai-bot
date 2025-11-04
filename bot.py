@@ -158,6 +158,7 @@ LIFE_BEST = [
     "formia.so — Преврати свой логотип в 3D объект",
     "pictogram2.com — Сотни бесплатных иконок",
     "hitem3d.ai — 3D модель в пару кликов из картинки",
+    "homestyler.com — Спроектируй квартируй своей мечты",
 ]
 
 FUN_BEST = [
@@ -406,6 +407,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
