@@ -160,6 +160,7 @@ LIFE_BEST = [
     "hitem3d.ai — 3D модель в пару кликов из картинки",
     "homestyler.com — Спроектируй квартируй своей мечты",
     "gambo.ai — Собственная игра за пару минут",
+    "vectorizer.ai — Преврати картинку в вектор",
 ]
 
 FUN_BEST = [
@@ -408,6 +409,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
