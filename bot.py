@@ -162,6 +162,7 @@ LIFE_BEST = [
     "gambo.ai — Собственная игра за пару минут",
     "vectorizer.ai — Преврати картинку в вектор",
     "handtextai.com — Эмитация рукописного текста",
+    "thetruesize.com — Проверь реальный размер страны",
 ]
 
 FUN_BEST = [
@@ -410,6 +411,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
