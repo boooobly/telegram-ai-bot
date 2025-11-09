@@ -163,6 +163,7 @@ LIFE_BEST = [
     "vectorizer.ai — Преврати картинку в вектор",
     "handtextai.com — Эмитация рукописного текста",
     "thetruesize.com — Проверь реальный размер страны",
+    "grabcraft.com — Стань лучшим строителем в minecraft",
 ]
 
 FUN_BEST = [
@@ -411,6 +412,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
