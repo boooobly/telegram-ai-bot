@@ -165,6 +165,7 @@ LIFE_BEST = [
     "thetruesize.com — Проверь реальный размер страны",
     "grabcraft.com — Стань лучшим строителем в minecraft",
     "similarsites.com — Найди похожий сайт, просто введя на него ссылку",
+    "justdeleteme.xyz — Удали аккаунт на любом сайте",
 ]
 
 FUN_BEST = [
@@ -413,6 +414,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
