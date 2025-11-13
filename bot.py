@@ -34,7 +34,7 @@ def no_preview(text: str) -> str:
     """Отключаем предпросмотр ссылок (вставляем zero-width space перед http)."""
     return text.replace("http", "\u200bhttp")
 
-# === Data (можно вынести в JSON позже) ===
+# === Data (оригинальные списки) ===
 LIFE_BEST = [
     "Gamma.app — Презентации с помощью ИИ",
     "scribbr.com — Проверка грамматики, плагиата и оформление текста",
@@ -190,6 +190,86 @@ CATEGORIES = {
     "win":  {"title": "🪟 Фишки Windows, о которых ты должен знать:", "items": WIN_TIPS},
 }
 
+# --- Общий список и глобальная нумерация ---
+ALL_SITES = LIFE_BEST + FUN_BEST + WIN_TIPS
+SITE_INDEX = {text: idx + 1 for idx, text in enumerate(ALL_SITES)}
+
+def filter_sites_by_keywords(*keywords: str):
+    res = []
+    keys = [k.lower() for k in keywords]
+    for text in ALL_SITES:
+        low = text.lower()
+        if any(k in low for k in keys):
+            res.append(text)
+    return res
+
+# --- Группы (каталог по темам) ---
+GROUPS = {}
+
+# Дизайн / моделирование
+GROUPS["design"] = {
+    "title": "🎨 Дизайн / моделирование:",
+    "items": filter_sites_by_keywords("дизайн", "3d", "логотип", "анимаци", "модель", "mockup", "арт")
+}
+
+# Видео / монтаж
+GROUPS["video"] = {
+    "title": "🎬 Видео / монтаж:",
+    "items": filter_sites_by_keywords("видео", "video", "монтаж", "нарезк", "субтитр")
+}
+
+# Фото / изображения
+GROUPS["photo"] = {
+    "title": "🖼 Фото / изображения:",
+    "items": filter_sites_by_keywords("фото", "изображен", "картинк", "скриншот", "фотошоп")
+}
+
+# Музыка / звуки
+GROUPS["music"] = {
+    "title": "🎵 Музыка / звуки:",
+    "items": filter_sites_by_keywords("музык", "звук", "вокал", "music")
+}
+
+# Текст / документы
+GROUPS["text"] = {
+    "title": "✍️ Текст и документы:",
+    "items": filter_sites_by_keywords("текст", "граммат", "перевод")
+}
+
+# Учёба
+GROUPS["study"] = {
+    "title": "📚 Учёба:",
+    "items": filter_sites_by_keywords("задач", "анатом", "математ", "химическ", "дет")
+}
+
+# Игры
+GROUPS["games"] = {
+    "title": "🎮 Игры:",
+    "items": filter_sites_by_keywords("игр", "minecraft", "майнкрафт", "симулятор", "mmorpg", "ммо")
+}
+
+# Чат-боты и ИИ-каталоги
+GROUPS["bots"] = {
+    "title": "🤖 Чат-боты и каталоги ИИ:",
+    "items": filter_sites_by_keywords("бот", "gpt", "нейросет", "нейронк", "chathub", "theresanaiforthat")
+}
+
+# Презентации
+GROUPS["slides"] = {
+    "title": "📊 Презентации:",
+    "items": filter_sites_by_keywords("презентац")
+}
+
+# Разное (всё, что не попало ни в одну группу выше)
+used_in_groups = set()
+for g in GROUPS.values():
+    used_in_groups.update(g["items"])
+
+GROUPS["other"] = {
+    "title": "📦 Разное:",
+    "items": [t for t in ALL_SITES if t not in used_in_groups]
+}
+
 # === aiogram ===
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
@@ -201,15 +281,44 @@ home_reply_kb = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# Главное меню (inline)
+# Главное меню (inline) — оставляем старые рубрики + новая кнопка групп
 def main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="💡 Лучшие сайты", callback_data="show:life")],
             [InlineKeyboardButton(text="🎯 Сайты от скуки", callback_data="show:fun")],
             [InlineKeyboardButton(text="🪟 Фишки Windows", callback_data="show:win")],
+            [InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")]
         ]
     )
+
+# Меню групп (inline), как «каталог материалов»
+def groups_menu_kb() -> InlineKeyboardMarkup:
+    labels = [
+        ("design", "🎨 Дизайн/Моделирование"),
+        ("video", "🎬 Видео/Монтаж"),
+        ("photo", "🖼 Фото/Картинки"),
+        ("music", "🎵 Музыка/Звуки"),
+        ("text", "✍️ Текст/Документы"),
+        ("study", "📚 Учёба"),
+        ("games", "🎮 Игры"),
+        ("bots", "🤖 Чат-боты/ИИ"),
+        ("slides", "📊 Презентации"),
+        ("other", "📦 Разное"),
+    ]
+
+    rows = []
+    row = []
+    for key, label in labels:
+        if key not in GROUPS or not GROUPS[key]["items"]:
+            continue  # пропускаем пустые группы
+        row.append(InlineKeyboardButton(text=label, callback_data=f"group:{key}"))
+        if len(row) == 2:
+            rows.append(row)
+            row = []
+    if row:
+        rows.append(row)
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 # Кнопки раздела (inline): Обновить + две другие рубрики
 def section_menu_kb(current: str) -> InlineKeyboardMarkup:
@@ -217,6 +326,7 @@ def section_menu_kb(current: str) -> InlineKeyboardMarkup:
     for key, label in (("life", "💡 Лучшие сайты"), ("fun", "🎯 Сайты от скуки"), ("win", "🪟 Фишки Windows")):
         if key != current:
             buttons.append([InlineKeyboardButton(text=label, callback_data=f"show:{key}")])
+    buttons.append([InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")])
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 # === Helpers ===
@@ -239,7 +349,7 @@ async def send_category(chat_id: int, key: str):
     chunk_size = 50
     total = len(items)
     for i in range(0, total, chunk_size):
-        chunk = items[i:i+chunk_size]
+        chunk = items[i:i + chunk_size]
         body = "\n".join([f"{i + j + 1}. {v}" for j, v in enumerate(chunk)])
         text = f"{title}\n{body}"
         if i + chunk_size >= total:
@@ -250,16 +360,41 @@ async def send_category(chat_id: int, key: str):
             disable_web_page_preview=True
         )
 
+async def send_group(chat_id: int, group_key: str):
+    group = GROUPS[group_key]
+    title = group["title"]
+    items = group["items"]
+    if not items:
+        await bot.send_message(chat_id, no_preview(f"{title}\n(пока пусто)"), disable_web_page_preview=True)
+        return
+
+    lines = []
+    for text in items:
+        idx = SITE_INDEX.get(text, 0)
+        prefix = f"{idx}. " if idx else "- "
+        lines.append(prefix + text)
+
+    chunk_size = 40
+    total = len(lines)
+    for i in range(0, total, chunk_size):
+        chunk = lines[i:i + chunk_size]
+        text = f"{title}\n" + "\n".join(chunk)
+        if i + chunk_size >= total:
+            text += OUTRO
+        await bot.send_message(
+            chat_id,
+            no_preview(text),
+            disable_web_page_preview=True
+        )
+
 async def send_main_menu(chat_id: int):
     """Сначала включаем reply-клавиатуру, затем показываем inline-меню разделов."""
-    # 1) Включаем нижнюю reply-клавиатуру
     await bot.send_message(
         chat_id,
         "Кнопка «🏠 Главное меню» всегда внизу 👇",
         reply_markup=home_reply_kb,
         disable_web_page_preview=True
     )
-    # 2) Показываем inline-главное меню разделов
     await bot.send_message(
         chat_id,
         no_preview(WELCOME),
@@ -274,7 +409,6 @@ async def cmd_start(message: types.Message):
         if await is_user_subscribed(message.from_user.id):
             await send_main_menu(message.chat.id)
         else:
-            # Показываем reply-клавиатуру тоже (пусть всегда будет)
             await message.answer(
                 "❗Чтобы получить доступ к рубрикам, подпишись на канал:\nhttps://t.me/simplify_ai",
                 reply_markup=home_reply_kb,
@@ -293,7 +427,6 @@ async def cmd_start(message: types.Message):
             disable_web_page_preview=True
         )
 
-# Нажатие на нижнюю reply-кнопку «Главное меню»
 @dp.message(F.text == HOME_BTN_TEXT)
 async def on_home_button(message: types.Message):
     if await is_user_subscribed(message.from_user.id):
@@ -305,6 +438,7 @@ async def on_home_button(message: types.Message):
             disable_web_page_preview=True
         )
 
+# Старые рубрики (life/fun/win)
 @dp.callback_query(F.data.startswith("show:"))
 async def on_show(callback: types.CallbackQuery):
     key = callback.data.split(":", 1)[1]
@@ -351,11 +485,43 @@ async def on_refresh(callback: types.CallbackQuery):
     )
     await callback.answer("Обновлено")
 
+# === Новый режим: каталог по группам ===
+@dp.callback_query(F.data == "groups")
+async def on_groups(callback: types.CallbackQuery):
+    await callback.message.answer(
+        no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
+        reply_markup=groups_menu_kb(),
+        disable_web_page_preview=True
+    )
+    await callback.answer()
+
+@dp.callback_query(F.data.startswith("group:"))
+async def on_group(callback: types.CallbackQuery):
+    key = callback.data.split(":", 1)[1]
+    if key not in GROUPS:
+        await callback.answer("Неизвестная группа", show_alert=True)
+        return
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
+    await send_group(callback.message.chat.id, key)
+    # после выдачи списка снова показываем каталог групп
+    await callback.message.answer(
+        "Выбери другую группу или вернись в главное меню:",
+        reply_markup=groups_menu_kb(),
+        disable_web_page_preview=True
+    )
+    await callback.answer()
+
 # --- Fallback-хэндлер для любых непонятных сообщений ---
 @dp.message()
 async def fallback_message(message: types.Message):
-    # Сюда попадает всё, что не совпало с другими хэндлерами:
-    # произвольный текст, медиа, стикеры, голосовые, команды и т.п.
     await message.answer(
         "Я понимаю только команду /start и нажатия на кнопки.\n"
         "Нажми «🏠 Главное меню» ниже, чтобы вернуться к выбору разделов.",
@@ -366,12 +532,10 @@ async def fallback_message(message: types.Message):
 # --- Fallback-хэндлер для любых непонятных callback-кнопок ---
 @dp.callback_query()
 async def fallback_callback(callback: types.CallbackQuery):
-    # Например, если кнопка устарела или колбэк неизвестен
     await callback.answer("Кнопка больше неактивна. Используй «🏠 Главное меню».", show_alert=False)
 
-
 # === Webhook server ===
-async def handle_ping(request):  # healthcheck
+async def handle_ping(request):
     return web.Response(text="OK")
 
 async def webhook_handler(request: web.Request):
@@ -415,64 +579,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
