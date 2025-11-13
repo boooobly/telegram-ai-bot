@@ -167,6 +167,7 @@ LIFE_BEST = [
     "similarsites.com — Найди похожий сайт, просто введя на него ссылку",
     "justdeleteme.xyz — Удали аккаунт на любом сайте",
     "jigidi.com — Создай пазл из любой картинки",
+    "versus.com — Сравни всё что угодно!",
 ]
 
 FUN_BEST = [
@@ -579,3 +580,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
