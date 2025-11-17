@@ -171,6 +171,7 @@ LIFE_BEST = [
     "quickdraw.withgoogle.com — Обучи ИИ на своих рисунках",
     "fyro.ai — Генерируй видео, создавай изображения, пиши тексты с нейронками",
     "app.sesame.com — Выучи английский общаясь с нейронкой",
+    "mapchart.net — Создавай визуал с картами",
 ]
 
 FUN_BEST = [
@@ -583,6 +584,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
