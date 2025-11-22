@@ -175,6 +175,7 @@ LIFE_BEST = [
     "aistudio.google.com — Создавай сайты, приложения, генерируй тексты и изображения",
     "coddy.tech — Выучи любой язык программирования в игровом формате",
     "napkin.ai — Создавай крутые доклады с визуалом",
+    "fyro.ai — Тестируй NanoBanana PRO",
 ]
 
 FUN_BEST = [
@@ -588,6 +589,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
