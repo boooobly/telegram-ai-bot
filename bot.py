@@ -178,6 +178,8 @@ LIFE_BEST = [
     "fyro.ai — Тестируй NanoBanana PRO",
     "pngimg.com — Огромная библиотека PNG изображений",
     "gpt5-coding-examples.vercel.app/ — Библиотека готовый проектов в ChatGPT",
+    "photoskop.com — Бесплатный курс по фотографии",
+    "satellitemap.space — Узнай, какой спутник сейчас над тобой",
 ]
 
 FUN_BEST = [
@@ -591,6 +593,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
