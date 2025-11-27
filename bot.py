@@ -180,6 +180,7 @@ LIFE_BEST = [
     "gpt5-coding-examples.vercel.app/ — Библиотека готовый проектов в ChatGPT",
     "photoskop.com — Бесплатный курс по фотографии",
     "satellitemap.space — Узнай, какой спутник сейчас над тобой",
+    "ghostgpt.tech — Твой личный AI помощник для собеседований",
 ]
 
 FUN_BEST = [
@@ -593,6 +594,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
