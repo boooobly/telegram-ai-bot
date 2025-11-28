@@ -181,6 +181,7 @@ LIFE_BEST = [
     "photoskop.com — Бесплатный курс по фотографии",
     "satellitemap.space — Узнай, какой спутник сейчас над тобой",
     "ghostgpt.tech — Твой личный AI помощник для собеседований",
+    "oldmapsonline.org — История государств на карте",
 ]
 
 FUN_BEST = [
@@ -594,6 +595,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
