@@ -183,6 +183,7 @@ LIFE_BEST = [
     "ghostgpt.tech — Твой личный AI помощник для собеседований",
     "oldmapsonline.org — История государств на карте",
     "dinosaurpictures.org — Наша планета миллионы лет назад. pastvu.com — Старые фотографии со всего мира на карте. lightningmaps.org  — Карта молний в реальном времени",
+    "photiu.ai — Улучши качество, убери фон, генирируй изображения",
 ]
 
 FUN_BEST = [
@@ -596,6 +597,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
