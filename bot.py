@@ -188,6 +188,7 @@ LIFE_BEST = [
     "higgsfield.ai — Десятки нейронок и идеи для промптов",
     "numbeo.com — Узнай стоимость жизни в любой стране",
     "lumalabs.ai — Генерация видео",
+    "sloyd.ai — 3D модели по текстовому запросу",
 ]
 
 FUN_BEST = [
@@ -602,6 +603,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
