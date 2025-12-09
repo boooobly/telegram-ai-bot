@@ -191,6 +191,7 @@ LIFE_BEST = [
     "sloyd.ai — 3D модели по текстовому запросу",
     "deevid.ai — Создавай видео любого формата",
     "runable.com — Создай презентацию за пару минут",
+    "pixie.haus — Создавай пиксель-арты",
 ]
 
 FUN_BEST = [
@@ -605,6 +606,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
