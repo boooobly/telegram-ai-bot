@@ -196,6 +196,7 @@ LIFE_BEST = [
     "app.sigmabrowser.com — ChatGPT, но без фантазирований",
     "ifixit.com — Почини своими руками всё что угодно",
     "printpal.io — Создай 3D модель за пару секунд",
+    "huggingface.co/spaces/enzostvs/deepsite — Создай сайт за пару минут без кодинга",
 ]
 
 FUN_BEST = [
@@ -610,6 +611,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
