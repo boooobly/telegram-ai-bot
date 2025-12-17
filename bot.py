@@ -198,6 +198,8 @@ LIFE_BEST = [
     "printpal.io — Создай 3D модель за пару секунд",
     "huggingface.co/spaces/enzostvs/deepsite — Создай сайт за пару минут без кодинга",
     "pentestgpt.ai — Твой личный карманный хакер",
+    "rosebud.ai — Создай свою игру",
+    "startmycar.com — Почини своё авто сам",
 ]
 
 FUN_BEST = [
@@ -612,6 +614,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
