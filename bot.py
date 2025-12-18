@@ -200,6 +200,7 @@ LIFE_BEST = [
     "pentestgpt.ai — Твой личный карманный хакер",
     "rosebud.ai — Создай свою игру",
     "startmycar.com — Почини своё авто сам",
+    "myinstants.com — Тысячи звуков для твоих проектов",
 ]
 
 FUN_BEST = [
@@ -614,6 +615,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
