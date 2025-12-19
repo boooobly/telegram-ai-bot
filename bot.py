@@ -201,6 +201,7 @@ LIFE_BEST = [
     "rosebud.ai — Создай свою игру",
     "startmycar.com — Почини своё авто сам",
     "myinstants.com — Тысячи звуков для твоих проектов",
+    "@ReVibeMeBot — Улучши свою фотографию",
 ]
 
 FUN_BEST = [
@@ -615,6 +616,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
