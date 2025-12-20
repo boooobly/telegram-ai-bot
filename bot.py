@@ -202,6 +202,7 @@ LIFE_BEST = [
     "startmycar.com — Почини своё авто сам",
     "myinstants.com — Тысячи звуков для твоих проектов",
     "@ReVibeMeBot — Улучши свою фотографию",
+    "unicorn.studio — Крутые анимации для твоих проектов",
 ]
 
 FUN_BEST = [
@@ -616,6 +617,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
