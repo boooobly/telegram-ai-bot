@@ -205,6 +205,7 @@ LIFE_BEST = [
     "unicorn.studio — Крутые анимации для твоих проектов",
     "flowith.io — Создавай нейросети с помощью ИИ",
     "jitter.video — Сотни готовых видео-шаблонов",
+    "tools.flaex.ai — Найди нужную нейросеть под себя",
 ]
 
 FUN_BEST = [
@@ -619,6 +620,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
