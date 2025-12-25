@@ -220,6 +220,7 @@ FUN_BEST = [
     "hordes.io — Полноценная MMORPG в твоём браузере",
     "exp-abduction.lusion.co — Управляй летающей тарелкой прямо в браузере",
     "david.li — Интерактивные 3D игры",
+    "hammyhome.com — Твой хомяковый зоопарк в браузере",
 ]
 
 WIN_TIPS = [
@@ -621,6 +622,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
