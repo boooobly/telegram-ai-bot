@@ -208,6 +208,7 @@ LIFE_BEST = [
     "tools.flaex.ai — Найди нужную нейросеть под себя",
     "uiball.com — Элементы загрузки для твоих проектов",
     "freedesigntool.online/baby-track — Крутая диджитал анимация за минуту",
+    "spline.design — Сотни крутых визуалов под любой стиль",
 ]
 
 FUN_BEST = [
@@ -623,6 +624,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
