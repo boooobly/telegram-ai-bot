@@ -209,6 +209,7 @@ LIFE_BEST = [
     "uiball.com — Элементы загрузки для твоих проектов",
     "freedesigntool.online/baby-track — Крутая диджитал анимация за минуту",
     "spline.design — Сотни крутых визуалов под любой стиль",
+    "huggingface.co/spaces/multimodalart/qwen-image-multiple-angles-3d-camera — Меняй ракурсы фотографии",
 ]
 
 FUN_BEST = [
@@ -624,6 +625,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
