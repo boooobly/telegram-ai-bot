@@ -210,6 +210,7 @@ LIFE_BEST = [
     "freedesigntool.online/baby-track — Крутая диджитал анимация за минуту",
     "spline.design — Сотни крутых визуалов под любой стиль",
     "huggingface.co/spaces/multimodalart/qwen-image-multiple-angles-3d-camera — Меняй ракурсы фотографии",
+    "asciiart.eu — Создавай ascii art за пару секунд",
 ]
 
 FUN_BEST = [
@@ -625,6 +626,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
