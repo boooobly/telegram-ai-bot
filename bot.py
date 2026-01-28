@@ -212,6 +212,7 @@ LIFE_BEST = [
     "huggingface.co/spaces/multimodalart/qwen-image-multiple-angles-3d-camera — Меняй ракурсы фотографии",
     "asciiart.eu — Создавай ascii art за пару секунд",
     "svg.framerlists.com — Анимация SVG",
+    "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
 ]
 
 FUN_BEST = [
@@ -627,6 +628,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
