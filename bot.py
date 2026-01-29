@@ -213,6 +213,7 @@ LIFE_BEST = [
     "asciiart.eu — Создавай ascii art за пару секунд",
     "svg.framerlists.com — Анимация SVG",
     "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
+    "planner5d.com — Проектирование дома, квартиры, комнаты и много другого",
 ]
 
 FUN_BEST = [
@@ -628,6 +629,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
