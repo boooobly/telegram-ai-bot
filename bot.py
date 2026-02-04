@@ -216,6 +216,7 @@ LIFE_BEST = [
     "planner5d.com — Проектирование дома, квартиры, комнаты и много другого",
     "anvaka.github.io/city-roads/ — Создай карту города",
     "ghostgpt.tech — Твой невидимый ИИ помощник",
+    "pinokio.co — Установи нейронку к себе локально на ПК",
 ]
 
 FUN_BEST = [
@@ -631,6 +632,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
