@@ -217,6 +217,7 @@ LIFE_BEST = [
     "anvaka.github.io/city-roads/ — Создай карту города",
     "ghostgpt.tech — Твой невидимый ИИ помощник",
     "pinokio.co — Установи нейронку к себе локально на ПК",
+    "workout.cool — Твой личный тренер",
 ]
 
 FUN_BEST = [
@@ -632,6 +633,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
