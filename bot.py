@@ -219,6 +219,7 @@ LIFE_BEST = [
     "pinokio.co — Установи нейронку к себе локально на ПК",
     "workout.cool — Твой личный тренер",
     "jmail.world — Рассекреченные файлы Эпштейна",
+    "atomanimation.com — Визуализация атомов",
 ]
 
 FUN_BEST = [
@@ -634,6 +635,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
