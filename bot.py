@@ -1,5 +1,6 @@
 from aiohttp import web
 import asyncio
+import html
 import logging
 import os
 
@@ -36,14 +37,6 @@ PAGE_SIZE = 12
 
 class SearchStates(StatesGroup):
     waiting_query = State()
-
-
-class SearchStates(StatesGroup):
-    waiting_query = State()
-
-def no_preview(text: str) -> str:
-    """Отключаем предпросмотр ссылок (вставляем zero-width space перед http)."""
-    return text.replace("http", "\u200bhttp")
 
 # === Data (оригинальные списки) ===
 LIFE_BEST = [
@@ -416,6 +409,31 @@ def search_menu_kb() -> InlineKeyboardMarkup:
 
 # === Helpers ===
 
+def format_item(text: str) -> str:
+    parts = text.split(" — ", 1)
+    if len(parts) != 2:
+        return html.escape(text)
+
+    left, right = parts[0].strip(), parts[1].strip()
+    if not left:
+        return html.escape(text)
+
+    left_esc = html.escape(left)
+    right_esc = html.escape(right)
+
+    if left.startswith("@"):
+        return f"{left_esc} — {right_esc}"
+
+    low = left.lower()
+    looks_like_link = low.startswith(("http://", "https://")) or "." in left or "/" in left
+    if not looks_like_link:
+        return html.escape(text)
+
+    href = left if low.startswith(("http://", "https://")) else f"https://{left}"
+    href_esc = html.escape(href, quote=True)
+    return f'<a href="{href_esc}">{left_esc}</a> — {right_esc}'
+
+
 
 def clamp_page(page: int, total_items: int, page_size: int = PAGE_SIZE) -> int:
     if total_items <= 0:
@@ -471,7 +489,7 @@ def build_category_page_text(key: str, page: int, page_size: int = PAGE_SIZE):
     for text in chunk:
         idx = SITE_INDEX.get(text, 0)
         prefix = f"{idx}. " if idx else "- "
-        lines.append(prefix + text)
+        lines.append(prefix + format_item(text))
 
     text = f"{title}\n" + "\n".join(lines)
     if start + page_size >= len(items):
@@ -494,7 +512,7 @@ def build_group_page_text(group_key: str, page: int, page_size: int = PAGE_SIZE)
     for text in chunk:
         idx = SITE_INDEX.get(text, 0)
         prefix = f"{idx}. " if idx else "- "
-        lines.append(prefix + text)
+        lines.append(prefix + format_item(text))
 
     text = f"{title}\n" + "\n".join(lines)
     if start + page_size >= len(items):
@@ -505,7 +523,7 @@ def build_group_page_text(group_key: str, page: int, page_size: int = PAGE_SIZE)
 async def show_paginated_text(callback: types.CallbackQuery, text: str, markup: InlineKeyboardMarkup):
     try:
         await callback.message.edit_text(
-            no_preview(text),
+            text,
             reply_markup=markup,
             disable_web_page_preview=True
         )
@@ -514,7 +532,7 @@ async def show_paginated_text(callback: types.CallbackQuery, text: str, markup: 
         pass
 
     await callback.message.answer(
-        no_preview(text),
+        text,
         reply_markup=markup,
         disable_web_page_preview=True
     )
@@ -533,20 +551,20 @@ async def send_category(chat_id: int, key: str):
     title = data["title"]
     items = data["items"]
     if not items:
-        await bot.send_message(chat_id, no_preview(f"{title}\n(пока пусто)"), disable_web_page_preview=True)
+        await bot.send_message(chat_id, f"{title}\n(пока пусто)", disable_web_page_preview=True)
         return
 
     chunk_size = 50
     total = len(items)
     for i in range(0, total, chunk_size):
         chunk = items[i:i + chunk_size]
-        body = "\n".join([f"{i + j + 1}. {v}" for j, v in enumerate(chunk)])
+        body = "\n".join([f"{i + j + 1}. {format_item(v)}" for j, v in enumerate(chunk)])
         text = f"{title}\n{body}"
         if i + chunk_size >= total:
             text += OUTRO
         await bot.send_message(
             chat_id,
-            no_preview(text),
+            text,
             disable_web_page_preview=True
         )
 
@@ -555,14 +573,14 @@ async def send_group(chat_id: int, group_key: str):
     title = group["title"]
     items = group["items"]
     if not items:
-        await bot.send_message(chat_id, no_preview(f"{title}\n(пока пусто)"), disable_web_page_preview=True)
+        await bot.send_message(chat_id, f"{title}\n(пока пусто)", disable_web_page_preview=True)
         return
 
     lines = []
     for text in items:
         idx = SITE_INDEX.get(text, 0)
         prefix = f"{idx}. " if idx else "- "
-        lines.append(prefix + text)
+        lines.append(prefix + format_item(text))
 
     chunk_size = 40
     total = len(lines)
@@ -573,7 +591,7 @@ async def send_group(chat_id: int, group_key: str):
             text += OUTRO
         await bot.send_message(
             chat_id,
-            no_preview(text),
+            text,
             disable_web_page_preview=True
         )
 
@@ -587,7 +605,7 @@ async def send_main_menu(chat_id: int):
     )
     await bot.send_message(
         chat_id,
-        no_preview(WELCOME),
+        WELCOME,
         reply_markup=main_menu_kb(),
         disable_web_page_preview=True
     )
@@ -596,7 +614,7 @@ async def send_main_menu(chat_id: int):
 async def safe_edit_to_main_menu(callback: types.CallbackQuery):
     try:
         await callback.message.edit_text(
-            no_preview(WELCOME),
+            WELCOME,
             reply_markup=main_menu_kb(),
             disable_web_page_preview=True
         )
@@ -606,7 +624,7 @@ async def safe_edit_to_main_menu(callback: types.CallbackQuery):
 
     await bot.send_message(
         callback.message.chat.id,
-        no_preview(WELCOME),
+        WELCOME,
         reply_markup=main_menu_kb(),
         disable_web_page_preview=True
     )
@@ -621,7 +639,7 @@ async def safe_edit_reply_markup_or_send(callback: types.CallbackQuery, reply_ma
 
     await bot.send_message(
         callback.message.chat.id,
-        no_preview(fallback_text),
+        fallback_text,
         reply_markup=reply_markup,
         disable_web_page_preview=True
     )
@@ -664,7 +682,7 @@ async def on_search_start(callback: types.CallbackQuery, state: FSMContext):
 
     await state.set_state(SearchStates.waiting_query)
     await callback.message.answer(
-        no_preview("Напиши слово: видео, фото, логотип, minecraft..."),
+        "Напиши слово: видео, фото, логотип, minecraft...",
         disable_web_page_preview=True
     )
     await callback.answer()
@@ -688,7 +706,7 @@ async def on_search_query(message: types.Message, state: FSMContext):
     query = (message.text or "").strip()
     if len(query) <= 2:
         await message.answer(
-            no_preview("Запрос слишком короткий. Напиши подробнее (минимум 3 символа)."),
+            "Запрос слишком короткий. Напиши подробнее (минимум 3 символа).",
             disable_web_page_preview=True
         )
         return
@@ -696,7 +714,7 @@ async def on_search_query(message: types.Message, state: FSMContext):
     found = filter_sites_by_keywords(query)
     if not found:
         await message.answer(
-            no_preview("Ничего не нашёл. Попробуй другое слово."),
+            "Ничего не нашёл. Попробуй другое слово.",
             reply_markup=search_menu_kb(),
             disable_web_page_preview=True
         )
@@ -708,11 +726,11 @@ async def on_search_query(message: types.Message, state: FSMContext):
     for text in limited:
         idx = SITE_INDEX.get(text, 0)
         prefix = f"{idx}. " if idx else "- "
-        lines.append(prefix + text)
+        lines.append(prefix + format_item(text))
 
     result_text = "🔎 Результаты поиска:\n" + "\n".join(lines) + OUTRO
     await message.answer(
-        no_preview(result_text),
+        result_text,
         reply_markup=search_menu_kb(),
         disable_web_page_preview=True
     )
@@ -811,13 +829,13 @@ async def on_category_page(callback: types.CallbackQuery):
 async def on_groups(callback: types.CallbackQuery):
     try:
         await callback.message.edit_text(
-            no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
+            "📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇",
             reply_markup=groups_menu_kb(),
             disable_web_page_preview=True
         )
     except TelegramBadRequest:
         await callback.message.answer(
-            no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
+            "📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇",
             reply_markup=groups_menu_kb(),
             disable_web_page_preview=True
         )
@@ -848,12 +866,6 @@ async def on_group(callback: types.CallbackQuery):
 
     text, markup = build_group_page_text(key, page)
     await show_paginated_text(callback, text, markup)
-    await callback.answer()
-
-
-@dp.callback_query(F.data == "back:main")
-async def on_back_main(callback: types.CallbackQuery):
-    await safe_edit_to_main_menu(callback)
     await callback.answer()
 
 
