@@ -31,6 +31,11 @@ CHANNEL_USERNAME = "@simplify_ai"
 WELCOME = "✅ Добро пожаловать!\n\nВыбери нужную рубрику ниже 👇"
 OUTRO = "\nСледи за новыми публикациями на канале!"
 HOME_BTN_TEXT = "🏠 Главное меню"
+PAGE_SIZE = 12
+
+
+class SearchStates(StatesGroup):
+    waiting_query = State()
 
 
 class SearchStates(StatesGroup):
@@ -379,7 +384,7 @@ def groups_menu_kb() -> InlineKeyboardMarkup:
     for key, label in labels:
         if key not in GROUPS or not GROUPS[key]["items"]:
             continue  # пропускаем пустые группы
-        row.append(InlineKeyboardButton(text=label, callback_data=f"group:{key}"))
+        row.append(InlineKeyboardButton(text=label, callback_data=f"grp:{key}:p=0"))
         if len(row) == 2:
             rows.append(row)
             row = []
@@ -391,7 +396,7 @@ def groups_menu_kb() -> InlineKeyboardMarkup:
 
 # Кнопки раздела (inline): Обновить + две другие рубрики
 def section_menu_kb(current: str) -> InlineKeyboardMarkup:
-    buttons = [[InlineKeyboardButton(text="🔁 Обновить раздел", callback_data=f"refresh:{current}")]]
+    buttons = [[InlineKeyboardButton(text="↻ С начала", callback_data=f"cat:{current}:p=0")]]
     for key, label in (("life", "💡 Лучшие сайты"), ("fun", "🎯 Сайты от скуки"), ("win", "🪟 Фишки Windows")):
         if key != current:
             buttons.append([InlineKeyboardButton(text=label, callback_data=f"show:{key}")])
@@ -410,6 +415,111 @@ def search_menu_kb() -> InlineKeyboardMarkup:
     )
 
 # === Helpers ===
+
+
+def clamp_page(page: int, total_items: int, page_size: int = PAGE_SIZE) -> int:
+    if total_items <= 0:
+        return 0
+    max_page = (total_items - 1) // page_size
+    return max(0, min(page, max_page))
+
+
+def category_page_kb(key: str, page: int, total_items: int, page_size: int = PAGE_SIZE) -> InlineKeyboardMarkup:
+    max_page = (total_items - 1) // page_size if total_items else 0
+    nav_row = []
+    if page > 0:
+        nav_row.append(InlineKeyboardButton(text="⬅️", callback_data=f"cat:{key}:p={page - 1}"))
+    if page < max_page:
+        nav_row.append(InlineKeyboardButton(text="➡️", callback_data=f"cat:{key}:p={page + 1}"))
+
+    rows = []
+    if nav_row:
+        rows.append(nav_row)
+    rows.append([InlineKeyboardButton(text="↻ С начала", callback_data=f"cat:{key}:p=0")])
+    rows.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def group_page_kb(key: str, page: int, total_items: int, page_size: int = PAGE_SIZE) -> InlineKeyboardMarkup:
+    max_page = (total_items - 1) // page_size if total_items else 0
+    nav_row = []
+    if page > 0:
+        nav_row.append(InlineKeyboardButton(text="⬅️", callback_data=f"grp:{key}:p={page - 1}"))
+    if page < max_page:
+        nav_row.append(InlineKeyboardButton(text="➡️", callback_data=f"grp:{key}:p={page + 1}"))
+
+    rows = []
+    if nav_row:
+        rows.append(nav_row)
+    rows.append([InlineKeyboardButton(text="📁 Каталог групп", callback_data="groups")])
+    rows.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def build_category_page_text(key: str, page: int, page_size: int = PAGE_SIZE):
+    data = CATEGORIES[key]
+    title = data["title"]
+    items = data["items"]
+    if not items:
+        return f"{title}\n(пока пусто)", category_page_kb(key, 0, 0, page_size)
+
+    page = clamp_page(page, len(items), page_size)
+    start = page * page_size
+    chunk = items[start:start + page_size]
+
+    lines = []
+    for text in chunk:
+        idx = SITE_INDEX.get(text, 0)
+        prefix = f"{idx}. " if idx else "- "
+        lines.append(prefix + text)
+
+    text = f"{title}\n" + "\n".join(lines)
+    if start + page_size >= len(items):
+        text += OUTRO
+    return text, category_page_kb(key, page, len(items), page_size)
+
+
+def build_group_page_text(group_key: str, page: int, page_size: int = PAGE_SIZE):
+    group = GROUPS[group_key]
+    title = group["title"]
+    items = group["items"]
+    if not items:
+        return f"{title}\n(пока пусто)", group_page_kb(group_key, 0, 0, page_size)
+
+    page = clamp_page(page, len(items), page_size)
+    start = page * page_size
+    chunk = items[start:start + page_size]
+
+    lines = []
+    for text in chunk:
+        idx = SITE_INDEX.get(text, 0)
+        prefix = f"{idx}. " if idx else "- "
+        lines.append(prefix + text)
+
+    text = f"{title}\n" + "\n".join(lines)
+    if start + page_size >= len(items):
+        text += OUTRO
+    return text, group_page_kb(group_key, page, len(items), page_size)
+
+
+async def show_paginated_text(callback: types.CallbackQuery, text: str, markup: InlineKeyboardMarkup):
+    try:
+        await callback.message.edit_text(
+            no_preview(text),
+            reply_markup=markup,
+            disable_web_page_preview=True
+        )
+        return
+    except TelegramBadRequest:
+        pass
+
+    await callback.message.answer(
+        no_preview(text),
+        reply_markup=markup,
+        disable_web_page_preview=True
+    )
+
+
 async def is_user_subscribed(user_id: int) -> bool:
     try:
         member = await bot.get_chat_member(CHANNEL_USERNAME, user_id)
@@ -643,12 +753,8 @@ async def on_show(callback: types.CallbackQuery):
         await callback.answer()
         return
 
-    await send_category(callback.message.chat.id, key)
-    await safe_edit_reply_markup_or_send(
-        callback,
-        section_menu_kb(key),
-        "Выбери следующий раздел или обнови текущий:"
-    )
+    text, markup = build_category_page_text(key, 0)
+    await show_paginated_text(callback, text, markup)
     await callback.answer()
 
 @dp.callback_query(F.data.startswith("refresh:"))
@@ -666,15 +772,41 @@ async def on_refresh(callback: types.CallbackQuery):
         await callback.answer()
         return
 
-    await send_category(callback.message.chat.id, key)
-    await safe_edit_reply_markup_or_send(
-        callback,
-        section_menu_kb(key),
-        "Выбери следующий раздел или обнови текущий:"
-    )
+    text, markup = build_category_page_text(key, 0)
+    await show_paginated_text(callback, text, markup)
     await callback.answer("Обновлено")
 
 # === Новый режим: каталог по группам ===
+@dp.callback_query(F.data.startswith("cat:"))
+async def on_category_page(callback: types.CallbackQuery):
+    payload = callback.data.split(":")
+    if len(payload) != 3 or not payload[2].startswith("p="):
+        await callback.answer("Неизвестная рубрика", show_alert=True)
+        return
+
+    key = payload[1]
+    try:
+        page = int(payload[2].split("=", 1)[1])
+    except ValueError:
+        page = 0
+
+    if key not in CATEGORIES:
+        await callback.answer("Неизвестная рубрика", show_alert=True)
+        return
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
+    text, markup = build_category_page_text(key, page)
+    await show_paginated_text(callback, text, markup)
+    await callback.answer()
+
+
 @dp.callback_query(F.data == "groups")
 async def on_groups(callback: types.CallbackQuery):
     try:
@@ -691,9 +823,17 @@ async def on_groups(callback: types.CallbackQuery):
         )
     await callback.answer()
 
-@dp.callback_query(F.data.startswith("group:"))
+@dp.callback_query(F.data.startswith("grp:"))
 async def on_group(callback: types.CallbackQuery):
-    key = callback.data.split(":", 1)[1]
+    payload = callback.data.split(":")
+    if len(payload) != 3 or not payload[2].startswith("p="):
+        await callback.answer("Неизвестная группа", show_alert=True)
+        return
+    key = payload[1]
+    try:
+        page = int(payload[2].split("=", 1)[1])
+    except ValueError:
+        page = 0
     if key not in GROUPS:
         await callback.answer("Неизвестная группа", show_alert=True)
         return
@@ -706,12 +846,14 @@ async def on_group(callback: types.CallbackQuery):
         await callback.answer()
         return
 
-    await send_group(callback.message.chat.id, key)
-    await safe_edit_reply_markup_or_send(
-        callback,
-        groups_menu_kb(),
-        "Выбери другую группу или вернись в главное меню:"
-    )
+    text, markup = build_group_page_text(key, page)
+    await show_paginated_text(callback, text, markup)
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "back:main")
+async def on_back_main(callback: types.CallbackQuery):
+    await safe_edit_to_main_menu(callback)
     await callback.answer()
 
 
