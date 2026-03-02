@@ -38,6 +38,10 @@ PAGE_SIZE = 12
 class SearchStates(StatesGroup):
     waiting_query = State()
 
+
+class NumberStates(StatesGroup):
+    waiting_number = State()
+
 # === Data (оригинальные списки) ===
 LIFE_BEST = [
     "Gamma.app — Презентации с помощью ИИ",
@@ -353,7 +357,8 @@ def main_menu_kb() -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="🎯 Сайты от скуки", callback_data="show:fun")],
             [InlineKeyboardButton(text="🪟 Фишки Windows", callback_data="show:win")],
             [InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")],
-            [InlineKeyboardButton(text="🔎 Поиск", callback_data="search:start")]
+            [InlineKeyboardButton(text="🔎 Поиск", callback_data="search:start")],
+            [InlineKeyboardButton(text="🔢 Сервис по номеру", callback_data="num:start")]
         ]
     )
 
@@ -402,6 +407,16 @@ def search_menu_kb() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [InlineKeyboardButton(text="🔎 Новый поиск", callback_data="search:start")],
             [InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")],
+            [InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")],
+        ]
+    )
+
+
+def number_menu_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🔢 Другой номер", callback_data="num:start")],
+            [InlineKeyboardButton(text="🔎 Поиск", callback_data="search:start")],
             [InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")],
         ]
     )
@@ -486,9 +501,8 @@ def build_category_page_text(key: str, page: int, page_size: int = PAGE_SIZE):
     chunk = items[start:start + page_size]
 
     lines = []
-    for text in chunk:
-        idx = SITE_INDEX.get(text, 0)
-        prefix = f"{idx}. " if idx else "- "
+    for offset, text in enumerate(chunk):
+        prefix = f"{start + offset + 1}. "
         lines.append(prefix + format_item(text))
 
     text = f"{title}\n" + "\n".join(lines)
@@ -887,6 +901,54 @@ async def on_back_main(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
     await safe_edit_to_main_menu(callback)
     await callback.answer()
+
+
+@dp.callback_query(F.data == "num:start")
+async def on_number_start(callback: types.CallbackQuery, state: FSMContext):
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
+    await state.set_state(NumberStates.waiting_number)
+    await callback.message.answer(
+        "Отправь номер сервиса, например 185",
+        disable_web_page_preview=True
+    )
+    await callback.answer()
+
+
+@dp.message(NumberStates.waiting_number, F.text)
+async def on_number_query(message: types.Message, state: FSMContext):
+    value = (message.text or "").strip()
+    total = len(ALL_SITES)
+    if not value.isdigit():
+        await message.answer(
+            "Отправь только номер, например 185",
+            disable_web_page_preview=True
+        )
+        return
+
+    idx = int(value)
+    if idx < 1 or idx > total:
+        await message.answer(
+            f"Номер должен быть от 1 до {total}",
+            disable_web_page_preview=True
+        )
+        return
+
+    item = ALL_SITES[idx - 1]
+    text = f"Сервис #{idx}\n{format_item(item)}\n{OUTRO}"
+    await message.answer(
+        text,
+        reply_markup=number_menu_kb(),
+        disable_web_page_preview=True
+    )
+    await state.clear()
 
 # --- Fallback-хэндлер для любых непонятных сообщений ---
 @dp.message()
