@@ -383,7 +383,6 @@ def groups_menu_kb() -> InlineKeyboardMarkup:
             row = []
     if row:
         rows.append(row)
-    rows.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="back:main")])
     rows.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -454,6 +453,7 @@ def category_page_kb(key: str, page: int, total_items: int, page_size: int = PAG
     if nav_row:
         rows.append(nav_row)
     rows.append([InlineKeyboardButton(text="↻ С начала", callback_data=f"cat:{key}:p=0")])
+    rows.append([InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")])
     rows.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -757,7 +757,8 @@ async def on_home_button(message: types.Message):
 
 # Старые рубрики (life/fun/win)
 @dp.callback_query(F.data.startswith("show:"))
-async def on_show(callback: types.CallbackQuery):
+async def on_show(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
     key = callback.data.split(":", 1)[1]
     if key not in CATEGORIES:
         await callback.answer("Неизвестная рубрика", show_alert=True)
@@ -796,7 +797,8 @@ async def on_refresh(callback: types.CallbackQuery):
 
 # === Новый режим: каталог по группам ===
 @dp.callback_query(F.data.startswith("cat:"))
-async def on_category_page(callback: types.CallbackQuery):
+async def on_category_page(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
     payload = callback.data.split(":")
     if len(payload) != 3 or not payload[2].startswith("p="):
         await callback.answer("Неизвестная рубрика", show_alert=True)
@@ -826,7 +828,17 @@ async def on_category_page(callback: types.CallbackQuery):
 
 
 @dp.callback_query(F.data == "groups")
-async def on_groups(callback: types.CallbackQuery):
+async def on_groups(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    if not await is_user_subscribed(callback.from_user.id):
+        await callback.message.answer(
+            "❗Чтобы открыть разделы, подпишись на канал:\nhttps://t.me/simplify_ai",
+            reply_markup=home_reply_kb,
+            disable_web_page_preview=True
+        )
+        await callback.answer()
+        return
+
     try:
         await callback.message.edit_text(
             "📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇",
@@ -842,7 +854,8 @@ async def on_groups(callback: types.CallbackQuery):
     await callback.answer()
 
 @dp.callback_query(F.data.startswith("grp:"))
-async def on_group(callback: types.CallbackQuery):
+async def on_group(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
     payload = callback.data.split(":")
     if len(payload) != 3 or not payload[2].startswith("p="):
         await callback.answer("Неизвестная группа", show_alert=True)
@@ -870,7 +883,8 @@ async def on_group(callback: types.CallbackQuery):
 
 
 @dp.callback_query(F.data == "back:main")
-async def on_back_main(callback: types.CallbackQuery):
+async def on_back_main(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
     await safe_edit_to_main_menu(callback)
     await callback.answer()
 
