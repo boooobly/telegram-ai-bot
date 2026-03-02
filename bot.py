@@ -37,6 +37,10 @@ PAGE_SIZE = 12
 class SearchStates(StatesGroup):
     waiting_query = State()
 
+
+class SearchStates(StatesGroup):
+    waiting_query = State()
+
 def no_preview(text: str) -> str:
     """Отключаем предпросмотр ссылок (вставляем zero-width space перед http)."""
     return text.replace("http", "\u200bhttp")
@@ -844,6 +848,12 @@ async def on_group(callback: types.CallbackQuery):
 
     text, markup = build_group_page_text(key, page)
     await show_paginated_text(callback, text, markup)
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "back:main")
+async def on_back_main(callback: types.CallbackQuery):
+    await safe_edit_to_main_menu(callback)
     await callback.answer()
 
 
