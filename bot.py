@@ -378,6 +378,8 @@ def groups_menu_kb() -> InlineKeyboardMarkup:
             row = []
     if row:
         rows.append(row)
+    rows.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="back:main")])
+    rows.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 # Кнопки раздела (inline): Обновить + две другие рубрики
@@ -387,6 +389,7 @@ def section_menu_kb(current: str) -> InlineKeyboardMarkup:
         if key != current:
             buttons.append([InlineKeyboardButton(text=label, callback_data=f"show:{key}")])
     buttons.append([InlineKeyboardButton(text="📁 Каталог по группам", callback_data="groups")])
+    buttons.append([InlineKeyboardButton(text="🏠 Главное меню", callback_data="back:main")])
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 # === Helpers ===
@@ -462,6 +465,40 @@ async def send_main_menu(chat_id: int):
         disable_web_page_preview=True
     )
 
+
+async def safe_edit_to_main_menu(callback: types.CallbackQuery):
+    try:
+        await callback.message.edit_text(
+            no_preview(WELCOME),
+            reply_markup=main_menu_kb(),
+            disable_web_page_preview=True
+        )
+        return
+    except TelegramBadRequest:
+        pass
+
+    await bot.send_message(
+        callback.message.chat.id,
+        no_preview(WELCOME),
+        reply_markup=main_menu_kb(),
+        disable_web_page_preview=True
+    )
+
+
+async def safe_edit_reply_markup_or_send(callback: types.CallbackQuery, reply_markup: InlineKeyboardMarkup, fallback_text: str):
+    try:
+        await callback.message.edit_reply_markup(reply_markup=reply_markup)
+        return
+    except TelegramBadRequest:
+        pass
+
+    await bot.send_message(
+        callback.message.chat.id,
+        no_preview(fallback_text),
+        reply_markup=reply_markup,
+        disable_web_page_preview=True
+    )
+
 # === Handlers ===
 @dp.message(F.text == "/start")
 async def cmd_start(message: types.Message):
@@ -515,10 +552,10 @@ async def on_show(callback: types.CallbackQuery):
         return
 
     await send_category(callback.message.chat.id, key)
-    await callback.message.answer(
-        "Выбери следующий раздел или обнови текущий:",
-        reply_markup=section_menu_kb(key),
-        disable_web_page_preview=True
+    await safe_edit_reply_markup_or_send(
+        callback,
+        section_menu_kb(key),
+        "Выбери следующий раздел или обнови текущий:"
     )
     await callback.answer()
 
@@ -538,21 +575,28 @@ async def on_refresh(callback: types.CallbackQuery):
         return
 
     await send_category(callback.message.chat.id, key)
-    await callback.message.answer(
-        "Выбери следующий раздел или обнови текущий:",
-        reply_markup=section_menu_kb(key),
-        disable_web_page_preview=True
+    await safe_edit_reply_markup_or_send(
+        callback,
+        section_menu_kb(key),
+        "Выбери следующий раздел или обнови текущий:"
     )
     await callback.answer("Обновлено")
 
 # === Новый режим: каталог по группам ===
 @dp.callback_query(F.data == "groups")
 async def on_groups(callback: types.CallbackQuery):
-    await callback.message.answer(
-        no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
-        reply_markup=groups_menu_kb(),
-        disable_web_page_preview=True
-    )
+    try:
+        await callback.message.edit_text(
+            no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
+            reply_markup=groups_menu_kb(),
+            disable_web_page_preview=True
+        )
+    except TelegramBadRequest:
+        await callback.message.answer(
+            no_preview("📁 Каталог материалов\nНайди нужный раздел и нажми на кнопку ниже 👇"),
+            reply_markup=groups_menu_kb(),
+            disable_web_page_preview=True
+        )
     await callback.answer()
 
 @dp.callback_query(F.data.startswith("group:"))
@@ -571,12 +615,17 @@ async def on_group(callback: types.CallbackQuery):
         return
 
     await send_group(callback.message.chat.id, key)
-    # после выдачи списка снова показываем каталог групп
-    await callback.message.answer(
-        "Выбери другую группу или вернись в главное меню:",
-        reply_markup=groups_menu_kb(),
-        disable_web_page_preview=True
+    await safe_edit_reply_markup_or_send(
+        callback,
+        groups_menu_kb(),
+        "Выбери другую группу или вернись в главное меню:"
     )
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "back:main")
+async def on_back_main(callback: types.CallbackQuery):
+    await safe_edit_to_main_menu(callback)
     await callback.answer()
 
 # --- Fallback-хэндлер для любых непонятных сообщений ---
