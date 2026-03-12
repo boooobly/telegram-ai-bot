@@ -232,6 +232,7 @@ LIFE_BEST = [
     "ikea.com/us/en/planners/ — Обустрой свою комнату",
     "t.me/Sooner_0bot — Твои личный ИИ планировщик",
     "worldmonitor.app — Следи за актуальными новостями в мире, в режиме реального времени",
+    "lightpdf.com — Лучший онлайн редактор PDF",
 ]
 
 FUN_BEST = [
@@ -1010,6 +1011,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
 
