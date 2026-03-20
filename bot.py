@@ -240,6 +240,7 @@ LIFE_BEST = [
     "wokwi.com — Создавай свои проекты на базе ардуино и пр.",
     "openart.ai/suite/skin-enhancer — Улучши качество сгенерированного изображения",
     "emojicombos.com — Аски арт по одному слову",
+    "imagine.gsfc.nasa.gov/hst_bday/ — Снимок с телескопа Хаббл в твой день рождения",
 ]
 
 FUN_BEST = [
