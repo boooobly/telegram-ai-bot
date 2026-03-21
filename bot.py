@@ -241,6 +241,7 @@ LIFE_BEST = [
     "openart.ai/suite/skin-enhancer — Улучши качество сгенерированного изображения",
     "emojicombos.com — Аски арт по одному слову",
     "imagine.gsfc.nasa.gov/hst_bday/ — Снимок с телескопа Хаббл в твой день рождения",
+    "hackerai.co — Твой личный этичный хакер в кармане",
 ]
 
 FUN_BEST = [
