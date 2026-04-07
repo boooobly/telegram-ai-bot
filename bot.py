@@ -251,6 +251,7 @@ LIFE_BEST = [
     "tooooools.app — Простая обработка изображений",
     "text-to-cad.zoo.dev — Создавай CAD модели с помощью ИИ",
     "terraink.app — Создавай постеры со своим городом",
+    "carcarekiosk.com — Гайды для твоего авто",
 ]
 
 FUN_BEST = [
