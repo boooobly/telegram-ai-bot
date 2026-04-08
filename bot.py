@@ -252,6 +252,7 @@ LIFE_BEST = [
     "text-to-cad.zoo.dev — Создавай CAD модели с помощью ИИ",
     "terraink.app — Создавай постеры со своим городом",
     "carcarekiosk.com — Гайды для твоего авто",
+    "swishy.ai — Анимации для твоего проекта",
 ]
 
 FUN_BEST = [
