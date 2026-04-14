@@ -258,6 +258,7 @@ LIFE_BEST = [
     "web.archive.org — Узнай, как сайты выглядели в прошлом",
     "photopea.com — Онлайн редактор изображений",
     "planyourroom.com — Создай план своей комнаты",
+    "bitmap.designfamilymarket.com — Обрабокта фотографии в bit стиле",
 ]
 
 FUN_BEST = [
