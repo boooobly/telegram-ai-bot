@@ -260,6 +260,7 @@ LIFE_BEST = [
     "planyourroom.com — Создай план своей комнаты",
     "bitmap.designfamilymarket.com — Обрабокта фотографии в bit стиле",
     "remove.photos — Редактируй изображение в браузере",
+    "app.paperanimator.com/text-match-cut — Бумажная анимация за секунды",
 ]
 
 FUN_BEST = [
