@@ -261,6 +261,7 @@ LIFE_BEST = [
     "bitmap.designfamilymarket.com — Обрабокта фотографии в bit стиле",
     "remove.photos — Редактируй изображение в браузере",
     "app.paperanimator.com/text-match-cut — Бумажная анимация за секунды",
+    "science.nasa.gov/specials/your-name-in-landsat — Напиши своё имя из ландшафтов на Земле",
 ]
 
 FUN_BEST = [
