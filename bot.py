@@ -263,6 +263,7 @@ LIFE_BEST = [
     "app.paperanimator.com/text-match-cut — Бумажная анимация за секунды",
     "science.nasa.gov/specials/your-name-in-landsat — Напиши своё имя из ландшафтов на Земле",
     "gambo.ai — Собственная игра за пару минут",
+    "systemrequirementslab.com — Проверь, потянет ли твой ПК игру",
 ]
 
 FUN_BEST = [
