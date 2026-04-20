@@ -264,6 +264,7 @@ LIFE_BEST = [
     "science.nasa.gov/specials/your-name-in-landsat — Напиши своё имя из ландшафтов на Земле",
     "gambo.ai — Собственная игра за пару минут",
     "systemrequirementslab.com — Проверь, потянет ли твой ПК игру",
+    "bananaprompts.xyz — Тысячи промптов для nanobanana",
 ]
 
 FUN_BEST = [
