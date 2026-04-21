@@ -265,6 +265,7 @@ LIFE_BEST = [
     "gambo.ai — Собственная игра за пару минут",
     "systemrequirementslab.com — Проверь, потянет ли твой ПК игру",
     "bananaprompts.xyz — Тысячи промптов для nanobanana",
+    "home.by.me — Создай планировку для своей квартиры",
 ]
 
 FUN_BEST = [
