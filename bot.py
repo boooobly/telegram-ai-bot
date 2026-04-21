@@ -3,6 +3,7 @@ import asyncio
 import html
 import logging
 import os
+from urllib.parse import urlparse
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.enums import ParseMode
@@ -304,6 +305,31 @@ def filter_sites_by_keywords(*keywords: str):
         if any(k in low for k in keys):
             res.append(text)
     return res
+
+
+def extract_site_key(text: str) -> str:
+    left = text.split(" — ", 1)[0].strip().lower()
+    if left.startswith("@"):
+        return left
+
+    normalized = left if "://" in left else f"https://{left}"
+    parsed = urlparse(normalized)
+    domain = parsed.netloc or parsed.path
+    if domain.startswith("www."):
+        domain = domain[4:]
+    return domain
+
+
+def dedupe_sites(items: list[str]) -> list[str]:
+    seen = set()
+    deduped = []
+    for item in items:
+        key = extract_site_key(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(item)
+    return deduped
 
 # --- Группы (каталог по темам) ---
 GROUPS = {}
@@ -759,7 +785,7 @@ async def on_search_query(message: types.Message, state: FSMContext):
         )
         return
 
-    found = filter_sites_by_keywords(query)
+    found = dedupe_sites(filter_sites_by_keywords(query))
     if not found:
         await message.answer(
             "Ничего не нашёл. Попробуй другое слово.",
