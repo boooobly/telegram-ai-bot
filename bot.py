@@ -267,6 +267,7 @@ LIFE_BEST = [
     "systemrequirementslab.com — Проверь, потянет ли твой ПК игру",
     "bananaprompts.xyz — Тысячи промптов для nanobanana",
     "home.by.me — Создай планировку для своей квартиры",
+    "trace.moe — Найди аниме по скриншоту",
 ]
 
 FUN_BEST = [
