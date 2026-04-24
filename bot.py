@@ -268,6 +268,7 @@ LIFE_BEST = [
     "bananaprompts.xyz — Тысячи промптов для nanobanana",
     "home.by.me — Создай планировку для своей квартиры",
     "trace.moe — Найди аниме по скриншоту",
+    "texturelabs.org — Тысячи бесплатных текстур",
 ]
 
 FUN_BEST = [
