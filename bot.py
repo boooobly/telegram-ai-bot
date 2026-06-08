@@ -290,6 +290,7 @@ LIFE_BEST = [
     "animagraffs.com — Десятки примеров, как устроенны сложные вещи в 3D визуализации",
     "proboi.site — Личный ИИ ассистент",
     "lostgamer.io — Geoguessr, но только в игровых мирах",
+    "github.com/ostafen/digler — Восстанови свои утерянные файлы",
 ]
 
 FUN_BEST = [
