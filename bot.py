@@ -291,6 +291,14 @@ LIFE_BEST = [
     "proboi.site — Личный ИИ ассистент",
     "lostgamer.io — Geoguessr, но только в игровых мирах",
     "github.com/ostafen/digler — Восстанови свои утерянные файлы",
+    "app.quiver.ai — ИИ для создания векторной графики",
+    "pixellab.javii.tools — Инструменты для работы с изображениями и создание графики",
+    "arnismc.com — Перемести в майнкрафт свой город",
+    "jsoncrack.com — Один из лучших инструментов для работы с JSON кодом",
+    "logo-grabber.com — Скачай любой логотип",
+    "maps.rayon.design — Любой кусок карты в CAD",
+    "recordly.dev — Лучший инструмент для записи экрана",
+    "tesana.ai — ИИ для создания игр без знания кода",
 ]
 
 FUN_BEST = [
