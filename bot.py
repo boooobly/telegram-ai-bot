@@ -303,6 +303,7 @@ LIFE_BEST = [
     "proboi.site — Личный ИИ ассистент",
     "messenger.abeto.co — Одна из лучших браузерных игр",
     "juddesk.com — Создай своё рабочее место в 3D",
+    "cleanpng.com — Более 12 миллионов png изображений",
 ]
 
 FUN_BEST = [
