@@ -305,6 +305,7 @@ LIFE_BEST = [
     "juddesk.com — Создай своё рабочее место в 3D",
     "cleanpng.com — Более 12 миллионов png изображений",
     "vocatype.app — Научись печатать несмотря на клавиатуру",
+    "learnkata.ai — Duolingo но для любой темы",
 ]
 
 FUN_BEST = [
