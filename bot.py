@@ -306,6 +306,7 @@ LIFE_BEST = [
     "cleanpng.com — Более 12 миллионов png изображений",
     "vocatype.app — Научись печатать несмотря на клавиатуру",
     "learnkata.ai — Duolingo но для любой темы",
+    "animos.app — Десятки настраиваемых моушн анимаций",
 ]
 
 FUN_BEST = [
