@@ -316,6 +316,7 @@ LIFE_BEST = [
     "motionsites.ai — Библиотека промптов для вайбкодинга",
     "modsnation.com — Браузерный тюнинг авто в 3D",
     "learn-anything.xyz — Выучи любую интересующую тему",
+    "cadlookup.com — Миллионы cad моделей на любой вкус",
 ]
 
 FUN_BEST = [
