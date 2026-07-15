@@ -317,6 +317,7 @@ LIFE_BEST = [
     "modsnation.com — Браузерный тюнинг авто в 3D",
     "learn-anything.xyz — Выучи любую интересующую тему",
     "cadlookup.com — Миллионы cad моделей на любой вкус",
+    "sellerden.ai — Твой личный помощник для работы с маркетплейсами",
 ]
 
 FUN_BEST = [
