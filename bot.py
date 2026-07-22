@@ -323,6 +323,8 @@ LIFE_BEST = [
     "svglogos.dev — Большая библиотека логотипов в векторе",
     "photofromemoji.com — Создавай арт из эмодзи",
     "motionbgs.com — Большая библиотека анимированных обоев",
+    "cadmapper.com — CAD карты",
+    "bird1000.com — Атмосферная браузерная игра",
 ]
 
 FUN_BEST = [
