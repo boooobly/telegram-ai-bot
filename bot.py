@@ -326,6 +326,7 @@ LIFE_BEST = [
     "cadmapper.com — CAD карты",
     "bird1000.com — Атмосферная браузерная игра",
     "neal.fun — Десятки интерактивных сайтов, что бы убить время",
+    "skybox.blockadelabs.com — Создавай панорамы по промпту",
 ]
 
 FUN_BEST = [
