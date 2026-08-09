@@ -339,6 +339,7 @@ LIFE_BEST = [
     "1) oskarstalberg.com/game/planet — Интерактивная игра с собственной планетой. 2) spoteeq.ru — Лучший сервис для оплаты зарубежных сервисов. 3) meigen.ai — Библиотека готовых промптов",
     "startmycar.com — Вся информация про машины",
     "perchance.org/ai-text-to-image-generator — Бесплатный генератор изображений",
+    "cineprompt.io — Конструктор промптов",
 ]
 
 FUN_BEST = [
