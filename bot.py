@@ -340,6 +340,7 @@ LIFE_BEST = [
     "startmycar.com — Вся информация про машины",
     "perchance.org/ai-text-to-image-generator — Бесплатный генератор изображений",
     "cineprompt.io — Конструктор промптов",
+    "mult.dev — Трэвел анимация за пару кликов",
 ]
 
 FUN_BEST = [
