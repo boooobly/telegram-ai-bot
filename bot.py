@@ -341,6 +341,7 @@ LIFE_BEST = [
     "perchance.org/ai-text-to-image-generator — Бесплатный генератор изображений",
     "cineprompt.io — Конструктор промптов",
     "mult.dev — Трэвел анимация за пару кликов",
+    "sweezy-cursors.com — Библиотека бесплатных курсоров",
 ]
 
 FUN_BEST = [
