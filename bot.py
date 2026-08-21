@@ -347,6 +347,8 @@ LIFE_BEST = [
     "tinkercad.com — Создавай электронные схемы или обучайся",
     "pngimg.com — Огромная библиотека PNG изображений",
     "runable.com — Создай презентацию за пару минут",
+    "workout.cool — Твой личный тренер",
+    "anvaka.github.io/city-roads/ — Создай карту города",
 ]
 
 FUN_BEST = [
