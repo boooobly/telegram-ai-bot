@@ -349,6 +349,8 @@ LIFE_BEST = [
     "runable.com — Создай презентацию за пару минут",
     "workout.cool — Твой личный тренер",
     "anvaka.github.io/city-roads/ — Создай карту города",
+    "pinokio.co — Установи нейронку к себе локально на ПК",
+    "atomanimation.com — Визуализация атомов",
 ]
 
 FUN_BEST = [
