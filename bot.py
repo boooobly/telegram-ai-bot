@@ -351,6 +351,7 @@ LIFE_BEST = [
     "anvaka.github.io/city-roads/ — Создай карту города",
     "pinokio.co — Установи нейронку к себе локально на ПК",
     "atomanimation.com — Визуализация атомов",
+    "ikea.com/us/en/planners/ — Обустрой свою комнату",
 ]
 
 FUN_BEST = [
