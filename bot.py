@@ -352,6 +352,7 @@ LIFE_BEST = [
     "pinokio.co — Установи нейронку к себе локально на ПК",
     "atomanimation.com — Визуализация атомов",
     "ikea.com/us/en/planners/ — Обустрой свою комнату",
+    "lightpdf.com — Лучший онлайн редактор PDF",
 ]
 
 FUN_BEST = [
