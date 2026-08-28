@@ -353,6 +353,9 @@ LIFE_BEST = [
     "atomanimation.com — Визуализация атомов",
     "ikea.com/us/en/planners/ — Обустрой свою комнату",
     "lightpdf.com — Лучший онлайн редактор PDF",
+    "perlerbeads.net — Собственный шаблон для алмазной мозаики",
+    "wokwi.com — Создавай свои проекты на базе ардуино и пр.",
+    "emojicombos.com — Аски арт по одному слову",
 ]
 
 FUN_BEST = [
