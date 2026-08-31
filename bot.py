@@ -358,6 +358,7 @@ LIFE_BEST = [
     "emojicombos.com — Аски арт по одному слову",
     "imagine.gsfc.nasa.gov/hst_bday/ — Снимок с телескопа Хаббл в твой день рождения",
     "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
+    "photogradient.com — Помощник дизайнера по градиентам",
 ]
 
 FUN_BEST = [
