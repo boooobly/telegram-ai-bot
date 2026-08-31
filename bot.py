@@ -357,6 +357,7 @@ LIFE_BEST = [
     "wokwi.com — Создавай свои проекты на базе ардуино и пр.",
     "emojicombos.com — Аски арт по одному слову",
     "imagine.gsfc.nasa.gov/hst_bday/ — Снимок с телескопа Хаббл в твой день рождения",
+    "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
 ]
 
 FUN_BEST = [
