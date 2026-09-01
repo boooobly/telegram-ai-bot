@@ -359,6 +359,7 @@ LIFE_BEST = [
     "imagine.gsfc.nasa.gov/hst_bday/ — Снимок с телескопа Хаббл в твой день рождения",
     "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
     "photogradient.com — Помощник дизайнера по градиентам",
+    "shademap.app — Проверь на карте теневые и солнечные стороны",
 ]
 
 FUN_BEST = [
