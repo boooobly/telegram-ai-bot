@@ -360,6 +360,7 @@ LIFE_BEST = [
     "cpreid2.github.io/blobSketch — Кастомная графика за минуту",
     "photogradient.com — Помощник дизайнера по градиентам",
     "shademap.app — Проверь на карте теневые и солнечные стороны",
+    "3dlogolab.io — Преврати любой логотип в 3D объект",
 ]
 
 FUN_BEST = [
