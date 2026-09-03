@@ -362,6 +362,7 @@ LIFE_BEST = [
     "photogradient.com — Помощник дизайнера по градиентам",
     "shademap.app — Проверь на карте теневые и солнечные стороны",
     "3dlogolab.io — Преврати любой логотип в 3D объект",
+    "svg.framerlists.com — Анимация SVG",
 ]
 
 FUN_BEST = [
