@@ -364,6 +364,7 @@ LIFE_BEST = [
     "3dlogolab.io — Преврати любой логотип в 3D объект",
     "svg.framerlists.com — Анимация SVG",
     "leolabs.space — Все объекты на орбите в реальном времени",
+    "adam.new — 3D модель по текстовому запросу",
 ]
 
 FUN_BEST = [
