@@ -363,6 +363,7 @@ LIFE_BEST = [
     "shademap.app — Проверь на карте теневые и солнечные стороны",
     "3dlogolab.io — Преврати любой логотип в 3D объект",
     "svg.framerlists.com — Анимация SVG",
+    "leolabs.space — Все объекты на орбите в реальном времени",
 ]
 
 FUN_BEST = [
