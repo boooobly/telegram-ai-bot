@@ -365,6 +365,7 @@ LIFE_BEST = [
     "svg.framerlists.com — Анимация SVG",
     "leolabs.space — Все объекты на орбите в реальном времени",
     "adam.new — 3D модель по текстовому запросу",
+    "hackerai.co — Твой личный этичный хакер в кармане",
 ]
 
 FUN_BEST = [
