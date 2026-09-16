@@ -371,6 +371,11 @@ LIFE_BEST = [
     "freesewing.eu — Создавай свои раскройки для одежды в пару кликов",
     "asciiart.eu — Создавай ascii art за пару секунд",
     "tools.flaex.ai — Найди нужную нейросеть под себя",
+    "3dtuning.com — Тюнингуй любые машины",
+    "unicorn.studio — Крутые анимации для твоих проектов",
+    "tree.icqr.com — Крутейший генератор QR-кодов",
+    "cleanup.pictures — Легко удали объект с фото",
+    "sketchfab.com — Тысячи 3D моделей на любой вкус",
 ]
 
 FUN_BEST = [
