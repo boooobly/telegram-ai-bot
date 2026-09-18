@@ -376,6 +376,8 @@ LIFE_BEST = [
     "tree.icqr.com — Крутейший генератор QR-кодов",
     "cleanup.pictures — Легко удали объект с фото",
     "sketchfab.com — Тысячи 3D моделей на любой вкус",
+    "womp.com — Сайт на котором можно делать 3D модели",
+    "satellitemap.space — Узнай, какой спутник сейчас над тобой",
 ]
 
 FUN_BEST = [
