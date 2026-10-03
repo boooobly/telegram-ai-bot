@@ -388,8 +388,8 @@ LIFE_BEST = [
     "dinosaurpictures.org — Наша планета миллионы лет назад. pastvu.com — Старые фотографии со всего мира на карте. lightningmaps.org  — Карта молний в реальном времени",
     "pixie.haus — Создавай пиксель-арты",
     "t.me/vitamed_ai_bot — Твой личный карманный доктор",
-    "thiings.co — Иконки на любой вкус",
     "liquid.paper.design — Анимируй лого, текст (эффект жидкого металла)",
+    "thiings.co — Иконки на любой вкус",
 ]
 
 FUN_BEST = [
