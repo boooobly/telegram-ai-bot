@@ -389,6 +389,7 @@ LIFE_BEST = [
     "pixie.haus — Создавай пиксель-арты",
     "t.me/vitamed_ai_bot — Твой личный карманный доктор",
     "thiings.co — Иконки на любой вкус",
+    "liquid.paper.design — Анимируй лого, текст (эффект жидкого металла)",
 ]
 
 FUN_BEST = [
