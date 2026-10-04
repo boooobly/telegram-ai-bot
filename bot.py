@@ -390,6 +390,7 @@ LIFE_BEST = [
     "t.me/vitamed_ai_bot — Твой личный карманный доктор",
     "liquid.paper.design — Анимируй лого, текст (эффект жидкого металла)",
     "thiings.co — Иконки на любой вкус",
+    "justdeleteme.xyz — Удали аккаунт на любом сайте",
 ]
 
 FUN_BEST = [
