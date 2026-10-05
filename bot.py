@@ -391,6 +391,7 @@ LIFE_BEST = [
     "liquid.paper.design — Анимируй лого, текст (эффект жидкого металла)",
     "thiings.co — Иконки на любой вкус",
     "justdeleteme.xyz — Удали аккаунт на любом сайте",
+    "photoskop.com — Бесплатный курс по фотографии",
 ]
 
 FUN_BEST = [
