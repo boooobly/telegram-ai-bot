@@ -392,6 +392,7 @@ LIFE_BEST = [
     "thiings.co — Иконки на любой вкус",
     "justdeleteme.xyz — Удали аккаунт на любом сайте",
     "photoskop.com — Бесплатный курс по фотографии",
+    "ifixit.com — Почини всё что угодно",
 ]
 
 FUN_BEST = [
