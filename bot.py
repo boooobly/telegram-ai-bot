@@ -393,6 +393,8 @@ LIFE_BEST = [
     "justdeleteme.xyz — Удали аккаунт на любом сайте",
     "photoskop.com — Бесплатный курс по фотографии",
     "ifixit.com — Почини всё что угодно",
+    "svgconverter.app — Преврати любое изображение в растр",
+    "slazhivanie.ru — платформа с AI-агентами для бизнеса",
 ]
 
 FUN_BEST = [
